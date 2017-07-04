@@ -6,6 +6,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class BlogPost extends Model
 {
+	const STATUS_PUBLIC = 'public';
+	const STATUS_PRIVATE = 'private';
+	const STATUS_DELETED = 'deleted';
+
     public function localeContents() {
     	return $this->hasMany('App\BlogPostContent', 'post_id');
     }
@@ -21,5 +25,10 @@ class BlogPost extends Model
 	 */
     public static function GetBySlug($slug) {
     	return self::where('slug', '=', $slug)->first();
+    }
+
+
+    public function categories() {
+    	return $this->belongsToMany('App\BlogCategory', 'blog_post_category', 'post_id', 'category_id');
     }
 }

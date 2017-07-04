@@ -27,7 +27,6 @@ class CreateBlogPostsTable extends Migration
 	        $table->integer('views_unique', false, true);
 	        $table->integer('shares_count', false, true);
 
-	        $table->index('slug');
         });
     }
 
