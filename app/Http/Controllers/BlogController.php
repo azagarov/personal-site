@@ -15,15 +15,15 @@ class BlogController extends Controller
 
 //	    $post->categories()->attach([6]);
 
-var_dump($post->categories);
+//var_dump($post->categories);
 
 
-	    $category = BlogCategory::find(6);
+//	    $category = BlogCategory::find(6);
 
-var_dump($category->posts);
+//var_dump($category->posts);
 
 
-    	return;
+//    	return;
 	    $post = BlogPost::GetBySlug($slug);
 
 	    if(!$post) {

@@ -15,8 +15,21 @@ class BlogPost extends Model
     }
 
     public function content($locale = 'en') {
-    	return $this->localeContents()->where('locale', '=', $locale)->first();
+    	$content = $this->localeContents()->where('locale', '=', $locale)->first();
+
+    	if(!$content) {
+    		$content = new BlogPostContent();
+    		$content->post_id = $this->id;
+    		$content->locale = $locale;
+	    }
+
+    	return $content;
     }
+
+    public function author() {
+    	return $this->belongsTo('App\User');
+    }
+
 
 	/**
 	 * @param $slug
@@ -30,5 +43,14 @@ class BlogPost extends Model
 
     public function categories() {
     	return $this->belongsToMany('App\BlogCategory', 'blog_post_category', 'post_id', 'category_id');
+    }
+
+
+    public static function GetFullStatusesList() {
+    	return [
+    		self::STATUS_PUBLIC => 'Public',
+		    self::STATUS_PRIVATE => 'Private',
+		    self::STATUS_DELETED => 'Deleted',
+	    ];
     }
 }

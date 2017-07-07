@@ -26,6 +26,21 @@ $router->group(['middleware' => ['check.locale']], function($router) {
 
 	Route::get('/blog/post/{slug}', 'BlogController@ShowSinglePost');
 
+
+	// ******************************************************************************
+	// ************************ Administration Part *********************************
+	// ******************************************************************************
+
+	$router->group(['middleware' => ['auth']], function($router) {
+		Route::get('/admin/dashboard', 'AdminDashboardController@show');
+
+
+		Route::get('/admin/blog/posts', 'AdminBlogController@PostsList');
+		Route::get('/admin/blog/edit-post/{postId}', 'AdminBlogController@EditPost');
+
+		Route::post('/admin/blog/save-post/{postId}', 'AdminBlogController@SavePost');
+		Route::post('/admin/blog/save-post/{postId}/{locale}', 'AdminBlogController@SavePostContent');
+	});
 });
 
 
@@ -41,3 +56,6 @@ Route::get('/switchLanguage/{locale}', function($locale) {
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
+
+
+
