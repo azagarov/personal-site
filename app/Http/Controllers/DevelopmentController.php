@@ -10,4 +10,10 @@ class DevelopmentController extends Controller
 
     	return view('development.home');
     }
+
+
+    public function ShowCV(Request $request) {
+
+	    return view('development.cv');
+    }
 }

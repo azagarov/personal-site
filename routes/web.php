@@ -17,6 +17,8 @@ $router->group(['middleware' => ['check.locale']], function($router) {
 	Route::get('/', 'HomePageController@Show');
 
 	Route::get('/development/', 'DevelopmentController@ShowHomePage');
+	Route::get('/development/cv', 'DevelopmentController@ShowCV');
+
 	Route::get('/music/', 'HomePageController@Show');
 	Route::get('/diving/', 'HomePageController@Show');
 	Route::get('/living/', 'HomePageController@Show');
@@ -32,14 +34,26 @@ $router->group(['middleware' => ['check.locale']], function($router) {
 	// ******************************************************************************
 
 	$router->group(['middleware' => ['auth']], function($router) {
-		Route::get('/admin/dashboard', 'AdminDashboardController@show');
 
+		$router->group(['middleware' => ['admin']], function($router) {
 
-		Route::get('/admin/blog/posts', 'AdminBlogController@PostsList');
-		Route::get('/admin/blog/edit-post/{postId}', 'AdminBlogController@EditPost');
+			Route::get('/admin/dashboard', 'AdminDashboardController@show');
 
-		Route::post('/admin/blog/save-post/{postId}', 'AdminBlogController@SavePost');
-		Route::post('/admin/blog/save-post/{postId}/{locale}', 'AdminBlogController@SavePostContent');
+			Route::get('/admin/profile', 'AdminProfileController@show');
+
+			Route::get('/admin/tasks', 'AdminTasksController@TasksList');
+			Route::get('/admin/tasks/edit/{taskId}', 'AdminTasksController@EditTask');
+			Route::post('/admin/tasks/save/{postId}', 'AdminTasksController@SaveTask');
+
+			// *************************** Blog Administration ********************************
+
+			Route::get('/admin/blog/posts', 'AdminBlogController@PostsList');
+			Route::get('/admin/blog/edit-post/{postId}', 'AdminBlogController@EditPost');
+
+			Route::post('/admin/blog/save-post/{postId}', 'AdminBlogController@SavePost');
+			Route::post('/admin/blog/save-post/{postId}/{locale}', 'AdminBlogController@SavePostContent');
+
+		});
 	});
 });
 
