@@ -15,6 +15,13 @@
     <script src="/templated-ion/js/skel.min.js"></script>
     <script src="/templated-ion/js/skel-layers.min.js"></script>
     <script src="/templated-ion/js/init.js"></script>
+
+    <!-- Bootstrap 3.3.6 -->
+    {{--<link rel="stylesheet" href="/bower_components/AdminLTE/bootstrap/css/bootstrap.min.css">--}}
+
+    <!-- Bootstrap 3.3.6 -->
+    {{--<script src="/bower_components/AdminLTE/bootstrap/js/bootstrap.min.js"></script>--}}
+
     <noscript>
         <link rel="stylesheet" href="/templated-ion/css/skel.css" />
         <link rel="stylesheet" href="/templated-ion/css/style.css" />

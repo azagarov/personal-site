@@ -18,6 +18,7 @@ $router->group(['middleware' => ['check.locale']], function($router) {
 
 	Route::get('/development/', 'DevelopmentController@ShowHomePage');
 	Route::get('/development/cv', 'DevelopmentController@ShowCV');
+	Route::get('/development/contacts', 'DevelopmentController@ShowContacts');
 
 	Route::get('/music/', 'HomePageController@Show');
 	Route::get('/diving/', 'HomePageController@Show');
@@ -66,6 +67,8 @@ Route::get('/switchLanguage/{locale}', function($locale) {
 	return \Redirect::back();
 });
 
+
+Route::post('/contacts/send_message', 'MiscController@SendMessage');
 
 Auth::routes();
 

@@ -7,4 +7,3 @@
 /.vagrant
 npm-debug.log
 .env
-composer.lock
