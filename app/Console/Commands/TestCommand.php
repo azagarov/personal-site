@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use Hash;
+
 class TestCommand extends Command
 {
     /**
