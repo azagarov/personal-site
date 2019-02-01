@@ -1,7 +1,7 @@
 /node_modules
 /public/hot
 /public/storage
-/public/bower_components
+#/public/bower_components
 /storage/*.key
 /vendor
 /.vagrant
