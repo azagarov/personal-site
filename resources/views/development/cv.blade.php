@@ -92,7 +92,7 @@
                         </div>
                         <div class="item">
                             <div class="number">15</div>
-                            <div class="item-label">Countries I've been<br />working from</div>
+                            <div class="item-label">Countries I worked <br />from</div>
                         </div>
                         <div class="item">
                             <div class="number">0</div>
