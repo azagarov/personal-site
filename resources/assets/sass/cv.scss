@@ -1,0 +1,278 @@
+#cv-top-info {
+  position: relative;
+  margin-bottom: 45px;
+
+  .avatar {
+    width: 160px;
+    height: 160px;
+    margin-right: 40px;
+
+    .inner img {
+      border-radius: 50%;
+      border: solid 1px black;
+      width: 160px;
+      height: 160px;
+    }
+  }
+
+  .name {
+    height: 160px;
+
+    .first {
+      transform: scale(1.25, 1.0);
+      /* margin-left: 41px; */
+      left: 41px;
+      color: #858f96;
+    }
+
+    .first, .last {
+      font-size: 50pt;
+      font-weight: bold;
+      text-transform: uppercase;
+      line-height: 63px;
+      position: relative;
+    }
+
+    .occupation {
+      font-size: 18pt;
+      position: absolute;
+      bottom: 1px;
+      color: #858f96;
+    }
+  }
+
+  .avatar, .name {
+    float:left;
+    margin-bottom: 7px;
+  }
+
+}
+
+
+
+
+
+#cv-top-contacts {
+  margin: 5px 0 50px 0;
+
+  div {
+    height: 50px;
+    padding-top: 12px;
+    padding-left: 15px;
+
+    i.fa {
+      padding-right: 10px;
+      font-size: 14pt;
+    }
+
+    a {
+      text-decoration: none;
+      color: #555f66;
+    }
+
+    a:hover {
+      color: #151f26;
+    }
+  }
+
+  div.phone, div.email {
+    border-bottom: solid 1px black;
+  }
+}
+
+
+
+
+
+.my-experience {
+  border-right: solid 1px black;
+  border-left: solid 1px black;
+}
+
+.experience {
+  position: relative;
+  padding-bottom: 20px;
+  margin-right: 4em;
+  margin-bottom: 2.5em;
+  border-bottom: dashed 2px black;
+
+  h6 {
+    font-weight: bold;
+  }
+
+  .icon, .name, .grade, .period {
+    float:left;
+  }
+
+  .icon {
+    height: 65px;
+    width: 50px;
+    padding: 20px 0 0 5px;
+
+    i {
+      font-size: 20pt;
+    }
+  }
+
+  .name {
+    font-weight: bold;
+    min-width: 60%;
+  }
+
+  .grade {
+    font-size: 10pt;
+    font-style: italic;
+    min-width: 60%;
+  }
+
+  .period {
+    width: 150px;
+    font-size: 11pt;
+  }
+
+  .location, .l-icon {
+    float: right;
+  }
+
+  .location {
+    min-width: 50%;
+    padding-left: 15px;
+    text-align: right;
+    font-size: 10pt;
+    font-style: italic;
+  }
+
+}
+
+.experience:last-of-type {
+  border-bottom: none;
+}
+
+.my-experience {
+  h4 {
+    margin: 3em 0 3em -1.1em;
+    color: #858f96;
+  }
+}
+
+.who-i-am {
+  h4 {
+    margin: 3em 0 3em -1.1em;
+    color: #858f96;
+  }
+}
+
+.my-skills {
+  h4 {
+    margin: 3em 0 3em -1.1em;
+    color: #858f96;
+  }
+
+  .skills-list {
+    h5 {
+      text-align: right;
+      border-bottom: solid 1px grey;
+
+      margin-right: -1.1em;
+      margin-top: 3em;
+    }
+
+    .skill {
+      h6 {
+        font-weight: bold;
+      }
+
+      .meter {
+        width: 100%; /* Full width */
+        background-color: #ddd;
+        height: 5px;
+
+        .level {
+          height: 5px;
+        }
+      }
+    }
+
+    .skill2 {
+      .meter {
+        width: 100%; /* Full width */
+        background-color: #ddd;
+        height: 5px;
+
+        .level {
+          height: 5px;
+        }
+      }
+    }
+  }
+}
+
+.life-philosophy {
+  max-width: 80%;
+  p {
+    text-align: justify;
+    font-style: italic;
+    text-indent: 2em;
+  }
+  .author {
+    text-align: right;
+    font-size: 9pt;
+    font-style: italic;
+  }
+}
+
+.about-me {
+  max-width: 80%;
+  p {
+    text-align: justify;
+    text-indent: 2em;
+  }
+}
+
+.my-numbers {
+  position: relative;
+  .item {
+    float: left;
+    text-align: center;
+    border: solid 1px black;
+    border-radius: 5%;
+    width: 42%;
+    margin-right: 5%;
+    margin-bottom: 15px;
+
+    .number {
+      font-size: 30pt;
+      font-weight: bold;
+      text-align: center;
+
+    }
+    .item-label {
+      text-align: center;
+    }
+  }
+}
+
+.my-interests {
+  position: relative;
+  .item {
+    float: left;
+    text-align: center;
+    width: 42%;
+    margin-right: 5%;
+    margin-bottom: 15px;
+
+    .icon {
+      font-size: 30pt;
+      font-weight: bold;
+      text-align: center;
+      border: solid 1px black;
+      border-radius: 21%;
+      width: 66px;
+      height: 66px;
+      display: inline-block;
+    }
+    .item-label {
+      text-align: center;
+    }
+  }
+}

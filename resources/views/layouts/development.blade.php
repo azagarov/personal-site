@@ -28,9 +28,17 @@
         <link rel="stylesheet" href="/templated-ion/css/style-xlarge.css" />
     </noscript>
 
+    <link rel="stylesheet" href="/css/app.css" />
+
     @stack('scripts')
     @stack('styles')
+    @yield('css')
 
+    <style type="text/css">
+        #nav li.active a {
+            text-decoration: underline;
+        }
+    </style>
 </head>
 <body id="top">
 
@@ -40,11 +48,11 @@
     <nav id="nav">
         <ul>
             {{--<li><a href="{{ url('/development') }}"><i class="fa fa-home major"></i></a></li>--}}
-            <li><a href="{{ url('/development') }}">{{ __('development_menu.home') }}</a></li>
-            <li><a href="{{ url('/development/cv') }}">{{ __('development_menu.cv') }}</a></li>
-            <li><a href="{{ url('/development/portfolio') }}">{{ __('development_menu.portfolio') }}</a></li>
-            <li><a href="{{ url('/development/blog') }}">{{ __('development_menu.blog') }}</a></li>
-            <li><a href="{{ url('/development/contacts') }}">{{ __('development_menu.contacts') }}</a></li>
+            <li @if(Request::is('development')) class="active" @endif><a href="{{ url('/development') }}">{{ __('development_menu.home') }}</a></li>
+            <li @if(Request::is('development/cv')) class="active" @endif><a href="{{ url('/development/cv') }}">{{ __('development_menu.cv') }}</a></li>
+            <li @if(Request::is('development/portfolio')) class="active" @endif><a href="{{ url('/development/portfolio') }}">{{ __('development_menu.portfolio') }}</a></li>
+            <li @if(Request::is('development/blog*')) class="active" @endif><a href="{{ url('/development/blog') }}">{{ __('development_menu.blog') }}</a></li>
+            <li @if(Request::is('development/contacts')) class="active" @endif><a href="{{ url('/development/contacts') }}">{{ __('development_menu.contacts') }}</a></li>
             <li>|</li>
             <li>
                 @foreach(['en' => 'En', 'es' => 'Es', 'ru' => 'Ru'] as $_lCode => $_lCaption)

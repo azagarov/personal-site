@@ -7,10 +7,12 @@
         <div class="inner">
             <h2>{{ __('Development is an Art') }}</h2>
             <p>{{ __('the language doesn\'t matter') }}</p>
+{{--
             <ul class="actions">
                 <li><a href="#content" class="button big special">Sign Up</a></li>
                 <li><a href="#elements" class="button big alt">Learn More</a></li>
             </ul>
+--}}
         </div>
     </section>
 
