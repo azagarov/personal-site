@@ -91,7 +91,7 @@
                             <div class="item-label">Finished Projects</div>
                         </div>
                         <div class="item">
-                            <div class="number">15</div>
+                            <div class="number">16</div>
                             <div class="item-label">Countries<br />I worked from</div>
                         </div>
                         <div class="item">
@@ -248,6 +248,10 @@
                     </div>
                     <div class="strength">
                         <i class="fa fa-check"></i>
+                        Computer Security
+                    </div>
+                    <div class="strength">
+                        <i class="fa fa-check"></i>
                         Changes foresight(*)
                     </div>
                     <div class="strength">
@@ -325,7 +329,7 @@
 
                     <h4>Other</h4>
                     <p>
-                        AJAX, RESTful, Git, SVN, FB Apps, 3rd Party systems integration, I will never disappear
+                        AJAX, RESTful, OAuth, 2-ways Authentication, Git, SVN, FB Apps, 3rd Party systems integration, Complex Reporting systems, I will never disappear
                     </p>
 
                     <br />

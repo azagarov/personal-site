@@ -83,10 +83,11 @@
 
 
 
-
-.my-experience {
-  border-right: solid 1px black;
-  border-left: solid 1px black;
+@media (min-width: 981px) {
+  .my-experience {
+    border-right: solid 1px black;
+    border-left: solid 1px black;
+  }
 }
 
 .experience {
