@@ -49,7 +49,7 @@
                         </div>
 
                         <div class="form-group">
-                            <button class="button special" id="send_message">Send</button>
+                            <button class="button special" id="send_message">{!! __('general_forms.button') !!}</button>
                         </div>
                     </div>
                 </div>
@@ -81,11 +81,14 @@
 
                         <h3>{{ __('Get In Touch With Social') }}</h3>
 
-                        <ul>
-                            <li>Facebook: <a target="_blank" href="https://www.facebook.com/aleksey.zagarov">https://www.facebook.com/aleksey.zagarov</a></li>
-                            <li>LinkedIn: <a target="_blank" href="https://www.linkedin.com/in/aleksey-zagarov-219b0bbb/">https://www.linkedin.com/in/aleksey-zagarov-219b0bbb/</a></li>
-                            <li>VK: <a target="_blank" href="https://vk.com/azagarov">https://vk.com/azagarov</a></li>
-                        </ul>
+                        <div class="social">
+                            <a href="https://www.facebook.com/aleksey.zagarov" rel="nofollow" target="_blank"><i class="fa fa-facebook-square fa-3x" aria-hidden="true"></i></a>
+                            <a href="https://www.linkedin.com/in/aleksey-zagarov-219b0bbb/" rel="nofollow" target="_blank"><i class="fa fa-linkedin-square fa-3x" aria-hidden="true"></i></a>
+                            <a href="https://vk.com/azagarov" rel="nofollow" target="_blank"><i class="fa fa-vk fa-3x" aria-hidden="true"></i></a>
+                            <!--<a href="https://www.facebook.com/aleksey.zagarov" rel="nofollow" target="_blank"><i class="fa fa-facebook-official" aria-hidden="true"></i></a>
+                            <a target="_blank" href="https://www.linkedin.com/in/aleksey-zagarov-219b0bbb/">https://www.linkedin.com/in/aleksey-zagarov-219b0bbb/</a>
+                            <a target="_blank" href="https://vk.com/azagarov">https://vk.com/azagarov</a>-->
+                        </div>
 <!--
                         <a href="#" class="image fit"><img src="/templated-ion/images/pic02.jpg" alt="" /></a>
                         <h3>Neque ornare adipiscing</h3>

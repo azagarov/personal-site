@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: aleksey
- * Date: 23/11/2017
- * Time: 12:10
- */
 
 return [
 	'name' => 'Name',
@@ -19,4 +13,6 @@ return [
 	'phone_placeholder' => '+12345678900',
 	'subject_placeholder' => 'Very Important Deal',
 	'message_placeholder' => 'Hi!...',
+
+    'button' => 'Send',
 ];

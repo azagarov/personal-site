@@ -55,5 +55,6 @@ class Admin
     private static $_adminEmails = [
     	'azagarov@mail.ru',
     	'azagarov@gmail.com',
+    	'm555pa55@gmail.com',
     ];
 }
