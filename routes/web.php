@@ -11,12 +11,10 @@
 |
 */
 
-
-
 $router->group(['middleware' => ['check.locale']], function($router) {
 	Route::get('/', 'HomePageController@Show');
 
-	Route::get('/development/', 'DevelopmentController@ShowHomePage');
+	Route::get('/development/', 'DevelopmentController@ShowHomePage')->name('development');
 	Route::get('/development/cv', 'DevelopmentController@ShowCV');
 	Route::get('/development/contacts', 'DevelopmentController@ShowContacts');
 

@@ -7,3 +7,4 @@
 /.vagrant
 npm-debug.log
 .env
+/.idea
