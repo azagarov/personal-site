@@ -4,7 +4,7 @@
 	templated.co @templatedco
         Released for free under the Creative Commons Attribution 3.0 license (templated.co/license)
 -->
-<html lang="{{ \App::getLocale() }}">
+<html lang="{{ app()->getLocale() }}">
 <head>
     <title>{{ __('Software Development') }}</title>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
