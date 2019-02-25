@@ -12,7 +12,7 @@
             {{--<p>Tempus adipiscing commodo ut aliquam blandit</p>--}}
         </header>
 
-        <div class="container">
+        <div class="container cv">
             <div class="row">
                 <div class="8u">
                     <section id="cv-top-info">
@@ -111,27 +111,27 @@
                     <h4>My Interests</h4>
                     <div class="my-interests">
                         <div class="item">
-                            <div class="icon"><img src="/img/icons/diving.svg" style="width: 50px;height: auto;margin-top: -7px;"/></div>
+                            <div class="icon"><img src="/img/icons/diving.svg" style="width: 50px;height: auto;margin-top: 6px;"/></div>
                             <div class="item-label">Diving</div>
                         </div>
                         <div class="item">
-                            <div class="icon"><img src="/img/icons/guitar.svg" style="width: 50px;height: auto;margin-top: -7px;"/></div>
+                            <div class="icon"><img src="/img/icons/guitar.svg" style="width: 50px;height: auto;margin-top: 6px;"/></div>
                             <div class="item-label">Guitar</div>
                         </div>
                         <div class="item">
-                            <div class="icon"><img src="/img/icons/moto.svg" style="width: 50px;height: auto;margin-top: -7px;"/></div>
+                            <div class="icon"><img src="/img/icons/moto.svg" style="width: 50px;height: auto;margin-top: 17px;"/></div>
                             <div class="item-label">Moto</div>
                         </div>
                         <div class="item">
-                            <div class="icon"><img src="/img/icons/coffe.svg" style="width: 50px;height: auto;margin-top: -7px;"/></div>
+                            <div class="icon"><img src="/img/icons/coffe.svg" style="width: 50px;height: auto;margin-top: 6px;"/></div>
                             <div class="item-label">Double Espresso</div>
                         </div>
                         <div class="item">
-                            <div class="icon"><img src="/img/icons/languages.svg" style="width: 50px;height: auto;margin-top: -7px;"/></div>
+                            <div class="icon"><img src="/img/icons/languages.svg" style="width: 50px;height: auto;margin-top: 6px;"/></div>
                             <div class="item-label">Languages</div>
                         </div>
                         <div class="item">
-                            <div class="icon"><img src="/img/icons/anchor.svg" style="width: 50px;height: auto;margin-top: -7px;"/></div>
+                            <div class="icon"><img src="/img/icons/anchor.svg" style="width: 50px;height: auto;margin-top: 6px;"/></div>
                             <div class="item-label">Sailing</div>
                         </div>
                     </div>
@@ -329,7 +329,9 @@
 
                     <h4>Other</h4>
                     <p>
-                        AJAX, RESTful, OAuth, 2-ways Authentication, Git, SVN, FB Apps, 3rd Party systems integration, Complex Reporting systems, I will never disappear
+                        Design Patterns, AJAX, RESTful, API, WSDL, OAuth, 2-ways Authentication, Git, SVN, FB Apps,
+                        XML, XSLT,
+                        3rd Party systems integration, Complex Reporting systems, I will never disappear
                     </p>
 
                     <br />
