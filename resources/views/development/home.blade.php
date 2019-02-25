@@ -37,7 +37,7 @@
                     </section>
                     <hr />
                     <section>
-                        <h3>Ante sed commodo</h3>
+                        <h3>Recent Blog Articles</h3>
                         <ul class="alt">
                             <li><a href="#">Erat blandit risus vis adipiscing</a></li>
                             <li><a href="#">Tempus ultricies faucibus amet</a></li>

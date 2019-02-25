@@ -303,25 +303,23 @@
   }
   &.goal {
     svg {
-      height: 50px;
-      width: 50px;
-      margin-top: 22px;
+      height: 54%;
+      /* width: 50px; */
+      margin-top: 23%;
     }
   }
 
   &.flexible {
     svg {
-      width: 50px;
-      height: 50px;
-      margin-top: 23px;
+      height: 54%;
+      margin-top: 23%;
     }
   }
 
   &.puzzle {
     svg {
-      width: 60px;
-      height: 60px;
-      margin-top: 18px;
+      height: 66%;
+      margin-top: 17%;
       //margin-left: 5px;
     }
   }
