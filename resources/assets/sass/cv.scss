@@ -277,3 +277,39 @@
     }
   }
 }
+
+.form-group {
+  label {
+    width: 100%;
+  }
+}
+
+.icon.major {
+  svg {
+    fill: white;
+  }
+  &.goal {
+    svg {
+      height: 50px;
+      width: 50px;
+      margin-top: 14px;
+    }
+  }
+
+  &.flexible {
+    svg {
+      width: 50px;
+      height: 50px;
+      margin-top: 17px;
+    }
+  }
+
+  &.puzzle {
+    svg {
+      width: 53px;
+      height: 53px;
+      margin-top: 18px;
+      margin-left: 5px;
+    }
+  }
+}

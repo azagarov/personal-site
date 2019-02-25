@@ -344,6 +344,8 @@
     </section>
 
     <!-- Two -->
+{{--
+
     <section id="two" class="wrapper style2">
         <header class="major">
             <h2>Commodo accumsan aliquam</h2>
@@ -374,6 +376,7 @@
             </div>
         </div>
     </section>
+--}}
 
 
 
