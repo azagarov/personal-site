@@ -10,6 +10,7 @@
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
     <meta name="description" content="" />
     <meta name="keywords" content="" />
+    <link rel="stylesheet" href="/css/app.css" />
     <!--[if lte IE 8]><script src="/templated-ion/js/html5shiv.js"></script><![endif]-->
     <script src="/templated-ion/js/jquery.min.js"></script>
     <script src="/templated-ion/js/skel.min.js"></script>
@@ -28,7 +29,6 @@
         <link rel="stylesheet" href="/templated-ion/css/style-xlarge.css" />
     </noscript>
 
-    <link rel="stylesheet" href="/css/app.css" />
 
     @stack('scripts')
     @stack('styles')
