@@ -29,11 +29,14 @@
                 </div>
                 <div class="4u">
                     <section>
-                        <h3>Magna massa blandit</h3>
-                        <p>Feugiat amet accumsan ante aliquet feugiat accumsan. Ante blandit accumsan eu amet tortor non lorem felis semper. Interdum adipiscing orci feugiat penatibus adipiscing col cubilia lorem ipsum dolor sit amet feugiat consequat.</p>
+                        @if($beginning)
+                            @php($content = $beginning->content($__currentLocale))
+                        <h3>{{ $content->title }}</h3>
+                        <p>{{ $content->annotation }}</p>
                         <ul class="actions">
-                            <li><a href="#" class="button alt">Learn More</a></li>
+                            <li><a href="{{ $beginning->GetUrl() }}" class="button alt">{{ __('Learn More') }}</a></li>
                         </ul>
+                        @endif
                     </section>
                     <hr />
                     <section>

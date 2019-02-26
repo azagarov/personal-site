@@ -4,6 +4,9 @@ namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 
+use App\Contracts\Blog;
+use App\Services\BlogService;
+
 class AppServiceProvider extends ServiceProvider
 {
     /**
@@ -24,5 +27,6 @@ class AppServiceProvider extends ServiceProvider
     public function register()
     {
         //
+	    $this->app->singleton(Blog::class, BlogService::class );
     }
 }

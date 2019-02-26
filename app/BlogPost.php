@@ -53,4 +53,24 @@ class BlogPost extends Model
 		    self::STATUS_DELETED => 'Deleted',
 	    ];
     }
+
+    public function GetUrl(\stdClass $environment = null) {
+	    $environment = $this->_prepareEnvironment($environment);
+
+	    switch($environment->section) {
+		    default: // common
+				return url("/blog/post/{$this->slug}");
+		    	break;
+	    }
+    }
+
+    private function _prepareEnvironment(\stdClass $environment = null) {
+    	if(!$environment) $environment = new \stdClass();
+
+    	if(!isset($environment->section)) {
+    		$environment->section = 'common';
+	    }
+
+	    return $environment;
+    }
 }
