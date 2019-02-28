@@ -9,13 +9,15 @@
 namespace App\Contracts;
 
 
+//use App\Contracts\BlogPost;
+
 interface Blog {
 
 	/**
 	 * @param $input
 	 * @param bool $publicOnly
 	 *
-	 * @return \App\BlogPost|null
+	 * @return BlogPost|null
 	 */
-	public function GetArticle($input, $publicOnly = true);
+	public function GetPost($input, $publicOnly = true);
 }

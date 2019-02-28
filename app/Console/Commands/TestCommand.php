@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use Hash;
+use Storage;
 
 class TestCommand extends Command
 {
@@ -39,6 +40,12 @@ class TestCommand extends Command
     public function handle()
     {
         $this->info("I'm a test command");
+
+//        $x = Storage::disk('s3')->allDirectories("images");
+        $x = Storage::disk('s3')->allFiles("images");
+        dd($x);
+
+        return;
         $this->info(Hash::make('a'));
     }
 }

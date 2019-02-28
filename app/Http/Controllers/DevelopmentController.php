@@ -11,13 +11,13 @@ class DevelopmentController extends Controller
     public function ShowHomePage(Request $request, Blog $blog) {
 
     	return view('development.home', [
-    		'beginning' => $blog->GetArticle('development-beginning', false),
+    		'beginning' => $blog->GetPost('development-beginning', false),
 	    ]);
+
     }
 
 
     public function ShowCV(Request $request) {
-
 	    return view('development.cv');
     }
 

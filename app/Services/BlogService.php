@@ -13,7 +13,7 @@ use App\BlogPost;
 
 class BlogService implements Blog {
 
-	public function GetArticle( $input, $publicOnly = true ) {
+	public function GetPost( $input, $publicOnly = true ) {
 		$q = BlogPost::where('slug', $input);
 		if($publicOnly) {
 			$q->where('status', BlogPost::STATUS_PUBLIC);

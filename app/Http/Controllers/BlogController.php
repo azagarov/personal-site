@@ -4,14 +4,25 @@ namespace App\Http\Controllers;
 
 use App\BlogCategory;
 use App\BlogPost;
+use App\Contracts\Blog;
 use Illuminate\Http\Request;
 
 class BlogController extends Controller
 {
-    public function ShowSinglePost($slug) {
+
+	public function __construct(Blog $blog) {
+		$this->blog = $blog;
+	}
+
+	/**
+	 * @var Blog
+	 */
+	private $blog;
+
+	public function ShowSinglePost($slug) {
 
 
-	    $post = BlogPost::GetBySlug($slug);
+//	    $post = BlogPost::GetBySlug($slug);
 
 //	    $post->categories()->attach([6]);
 
@@ -24,16 +35,14 @@ class BlogController extends Controller
 
 
 //    	return;
-	    $post = BlogPost::GetBySlug($slug);
+	    $post = $this->blog->GetPost($slug);
 
 	    if(!$post) {
 	    	die("<h2>NO POST FOUND</h2>");
 		    return;
 	    }
 
-	    $content = $post->content(\App::getLocale());
-
-	    return view('blog.single_post')->with(['post' => $post, 'content' => $content, ]);
+	    return view('blog.single_post')->with(['post' => $post, ]);
 
     }
 }

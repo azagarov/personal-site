@@ -4,7 +4,9 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class BlogCategory extends Model
+use App\Contracts\BlogCategory as BlogCategoryContract;
+
+class BlogCategory extends Model implements BlogCategoryContract
 {
 
 	const STATUS_PUBLIC = 'public';

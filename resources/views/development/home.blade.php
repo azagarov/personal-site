@@ -30,12 +30,13 @@
                 <div class="4u">
                     <section>
                         @if($beginning)
-                            @php($content = $beginning->content($__currentLocale))
-                        <h3>{{ $content->title }}</h3>
-                        <p>{{ $content->annotation }}</p>
+                        <h3>{{ $beginning->title }}</h3>
+                        <p>{{ $beginning->annotation }}</p>
                         <ul class="actions">
                             <li><a href="{{ $beginning->GetUrl() }}" class="button alt">{{ __('Learn More') }}</a></li>
                         </ul>
+                        @else
+                            {{-- ???? --}}
                         @endif
                     </section>
                     <hr />

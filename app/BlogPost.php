@@ -3,8 +3,9 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Contracts\BlogPost as BlogPostContract;
 
-class BlogPost extends Model
+class BlogPost extends Model implements BlogPostContract
 {
 	const STATUS_PUBLIC = 'public';
 	const STATUS_PRIVATE = 'private';
@@ -14,7 +15,18 @@ class BlogPost extends Model
     	return $this->hasMany('App\BlogPostContent', 'post_id');
     }
 
-    public function content($locale = 'en') {
+    public function __get( $key ) {
+    	if(in_array($key, ['title', 'annotation', 'html_content', 'place_name', 'place_description', ])) {
+		    $locale = \App::getLocale();
+    		$content = $this->content($locale);
+    		return $content->$key;
+	    }
+
+
+	    return parent::__get( $key );
+    }
+
+	public function content($locale = 'en') {
     	$content = $this->localeContents()->where('locale', '=', $locale)->first();
 
     	if(!$content) {
@@ -54,7 +66,7 @@ class BlogPost extends Model
 	    ];
     }
 
-    public function GetUrl(\stdClass $environment = null) {
+    public function GetUrl(array $environment = []) {
 	    $environment = $this->_prepareEnvironment($environment);
 
 	    switch($environment->section) {
@@ -64,11 +76,9 @@ class BlogPost extends Model
 	    }
     }
 
-    private function _prepareEnvironment(\stdClass $environment = null) {
-    	if(!$environment) $environment = new \stdClass();
-
-    	if(!isset($environment->section)) {
-    		$environment->section = 'common';
+    private function _prepareEnvironment(array $environment = []) {
+    	if(!isset($environment['section'])) {
+    		$environment['section'] = 'common';
 	    }
 
 	    return $environment;

@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>{{$content->title}}</title>
+    <title>{{$post->title}}</title>
 
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css?family=Raleway:100,600" rel="stylesheet" type="text/css">
@@ -87,7 +87,7 @@
 
     <div class="content">
         <div class="title m-b-md">
-            {{$content->title}}
+            {{$post->title}}
         </div>
 
         <div class="links">
@@ -100,7 +100,7 @@
         </div>
 
         <div class="content-wrapper">
-            {!! $content->html_content!!}
+            {!! $post->html_content!!}
         </div>
     </div>
 </div>
