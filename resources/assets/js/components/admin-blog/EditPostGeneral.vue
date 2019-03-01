@@ -2,24 +2,45 @@
 import df from "dateformat";
 
 export default {
-    props: ['_post', '_categories'],
+    props: ['_id'],
     mounted() {
         $(".select2").select2()
             .trigger('change')
             .on('change', ev => {
                 this.post.categories = $(ev.target).select2('data').map(x => parseInt(x.id));
             });
+
+        $('#date_occurred').datepicker({
+            autoclose: true
+        });
+
+        if(this._id) {
+            axios.get("/admin/blog/post/" + this._id).then(response => {
+                this.post = response.data;
+                this.$parent.hasPostId = true;
+                $('#date_occurred').datepicker('update', this.post.date_occurred);
+                $(".select2.categories").val(this.post.categories).trigger('change');
+
+            }).catch(e => {
+                console.log(e);
+            });
+        }
+
     },
     data() {
         // alert(this._categories);
-        const _p = JSON.parse(this._post);
-        if(_p.date_occurred)
-            _p.date_occurred = df(new Date(Date.parse(_p.date_occurred)), "mm/dd/yyyy");
+        // const _p = JSON.parse(this._post);
+        // if(_p.date_occurred)
+        //     _p.date_occurred = df(new Date(Date.parse(_p.date_occurred)), "mm/dd/yyyy");
 
-        _p.categories = JSON.parse(this._categories);
+        // _p.categories = JSON.parse(this._categories);
 
         return {
-            post: _p,
+            post: {
+                categories: [],
+                status: 'private',
+                main_order: 0,
+            },
             saving: false,
             isSaving: false,
             slugChanged: false,
@@ -30,6 +51,14 @@ export default {
     },
 
     computed: {
+        postId: {
+            get() {
+                return this.post.id;
+            },
+            set(v) {
+                this.post.id = v;
+            }
+        },
         slug() {
             return this.post.slug;
         },
@@ -62,6 +91,10 @@ export default {
     watch: {
         slug(val, old) {
             this.slugChanged = false;
+            return val;
+        },
+        postId(val, old) {
+            this.$parent.hasPostId = true;
             return val;
         }
     },
@@ -107,7 +140,7 @@ export default {
 
             this.isSaving = true;
 
-            axios.post('/admin/blog/post', {
+            axios.post('/admin/blog/post/'+this.postId, {
                 post: this.post
             }).then(response => {
                 const data = response.data;
@@ -118,10 +151,12 @@ export default {
                         body: this.post.id ? 'Main Post Data has Successfully been Updated!' : 'New Post has Successfully been Created!'
                     });
 
-                    const post = data.post;
-                    post.categories = data.categories;
-                    this.post = post;
-
+                    if(!this.post.id) {
+                        window.history.replaceState({}, '', "/admin/blog/edit-post/" + data.post.id);
+                        $("#bc_part").html("Edit Post #" + data.post.id);
+                    }
+                    $("#title_part").html("#" + data.post.id + " [" + data.post.slug + "]");
+                    this.post = data.post;
                 } else {
                     this.$parent.openModal({
                         type: 'danger',

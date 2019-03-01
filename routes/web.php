@@ -48,7 +48,14 @@ $router->group(['middleware' => ['check.locale']], function($router) {
 
 			Route::get('/admin/blog/posts', 'AdminBlogController@PostsList');
 			Route::post('/admin/blog/posts', 'AdminBlogController@PostsListAjax');
-			Route::post('/admin/blog/post', 'AdminBlogController@PostSaveAjax');
+
+			Route::get('/admin/blog/post/{id}', 'AdminBlogController@PostGetAjax');
+			Route::post('/admin/blog/post/{id?}', 'AdminBlogController@PostSaveAjax');
+
+			Route::get('/admin/blog/post/{id}/lang/{locale}', 'AdminBlogController@PostLangGetAjax');
+			Route::post('/admin/blog/post/{id}/lang/{locale}', 'AdminBlogController@PostLangSaveAjax');
+
+
 			Route::post('/admin/blog/test_slug', 'AdminBlogController@CheckSlugAjax');
 
 			Route::get('/admin/blog/edit-post/{postId}', 'AdminBlogController@EditPost');

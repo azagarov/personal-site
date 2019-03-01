@@ -2131,7 +2131,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-    props: ['_post', '_categories'],
+    props: ['_id'],
     mounted: function mounted() {
         var _this = this;
 
@@ -2140,16 +2140,36 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 return parseInt(x.id);
             });
         });
+
+        $('#date_occurred').datepicker({
+            autoclose: true
+        });
+
+        if (this._id) {
+            axios.get("/admin/blog/post/" + this._id).then(function (response) {
+                _this.post = response.data;
+                _this.$parent.hasPostId = true;
+                $('#date_occurred').datepicker('update', _this.post.date_occurred);
+                $(".select2.categories").val(_this.post.categories).trigger('change');
+            }).catch(function (e) {
+                console.log(e);
+            });
+        }
     },
     data: function data() {
         // alert(this._categories);
-        var _p = JSON.parse(this._post);
-        if (_p.date_occurred) _p.date_occurred = __WEBPACK_IMPORTED_MODULE_0_dateformat___default()(new Date(Date.parse(_p.date_occurred)), "mm/dd/yyyy");
+        // const _p = JSON.parse(this._post);
+        // if(_p.date_occurred)
+        //     _p.date_occurred = df(new Date(Date.parse(_p.date_occurred)), "mm/dd/yyyy");
 
-        _p.categories = JSON.parse(this._categories);
+        // _p.categories = JSON.parse(this._categories);
 
         return {
-            post: _p,
+            post: {
+                categories: [],
+                status: 'private',
+                main_order: 0
+            },
             saving: false,
             isSaving: false,
             slugChanged: false,
@@ -2161,6 +2181,14 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
 
     computed: {
+        postId: {
+            get: function get() {
+                return this.post.id;
+            },
+            set: function set(v) {
+                this.post.id = v;
+            }
+        },
         slug: function slug() {
             return this.post.slug;
         },
@@ -2195,6 +2223,10 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     watch: {
         slug: function slug(val, old) {
             this.slugChanged = false;
+            return val;
+        },
+        postId: function postId(val, old) {
+            this.$parent.hasPostId = true;
             return val;
         }
     },
@@ -2245,7 +2277,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
             this.isSaving = true;
 
-            axios.post('/admin/blog/post', {
+            axios.post('/admin/blog/post/' + this.postId, {
                 post: this.post
             }).then(function (response) {
                 var data = response.data;
@@ -2256,9 +2288,12 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                         body: _this3.post.id ? 'Main Post Data has Successfully been Updated!' : 'New Post has Successfully been Created!'
                     });
 
-                    var post = data.post;
-                    post.categories = data.categories;
-                    _this3.post = post;
+                    if (!_this3.post.id) {
+                        window.history.replaceState({}, '', "/admin/blog/edit-post/" + data.post.id);
+                        $("#title_part").html("#" + data.post.id + " [" + data.post.slug + "]");
+                        $("#bc_part").html("Edit Post #" + data.post.id);
+                    }
+                    _this3.post = data.post;
                 } else {
                     _this3.$parent.openModal({
                         type: 'danger',
@@ -2289,11 +2324,61 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-    props: ['_content'],
+    props: ['_id', 'locale', 'lname'],
     data: function data() {
         return {
-            content: JSON.parse(this._content)
+            content: {},
+            isSaving: false
         };
+    },
+    mounted: function mounted() {
+        var _this = this;
+
+        // alert(this._id);
+
+        axios.get('/admin/blog/post/' + this._id + '/lang/' + this.locale).then(function (response) {
+            _this.content = response.data;
+            CKEDITOR.replace('html_content_' + _this.locale);
+        }).catch(function (e) {
+            console.log(e);
+            alert('Error Loading Data');
+        });
+    },
+
+    computed: {
+        // postId() {
+        //     return this.$parent.postId;
+        // }
+    },
+    methods: {
+        save: function save() {
+            var _this2 = this;
+
+            this.isSaving = true;
+            axios.post('/admin/blog/post/' + this._id + '/lang/' + this.locale, {
+                postId: this._id,
+                locale: this.locale,
+                content: this.content
+
+            }).then(function (response) {
+                var data = response.data;
+                console.log(data);
+                _this2.$parent.openModal({
+                    type: 'success',
+                    title: 'Success',
+                    body: _this2.lname + " Content has Successfully been Updated"
+                });
+
+                _this2.isSaving = false;
+            }).catch(function (e) {
+                _this2.isSaving = false;
+                _this2.$parent.openModal({
+                    type: 'danger',
+                    title: 'Error',
+                    body: "Error Occurred During Saving Data. Try again later."
+                });
+            });
+        }
     }
 });
 
@@ -2307,6 +2392,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony default export */ __webpack_exports__["default"] = ({
     data: function data() {
         return {
+            hasPostId: false,
+            x: null,
             modal: {}
         };
     },
@@ -2315,6 +2402,14 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         openModal: function openModal(params) {
             this.modal = params;
             $("#post-modal").modal('show');
+        },
+        updatePostId: function updatePostId() {
+            this.x = this.$refs.main.postId;
+        }
+    },
+    computed: {
+        postId: function postId() {
+            return this.$refs.main.postId;
         }
     }
 });
@@ -2454,21 +2549,21 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /***/ (function(module, exports, __webpack_require__) {
 
 exports = module.exports = __webpack_require__(7)();
-exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", ""]);
+exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", ""]);
 
 /***/ }),
 /* 40 */
 /***/ (function(module, exports, __webpack_require__) {
 
 exports = module.exports = __webpack_require__(7)();
-exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n", ""]);
+exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", ""]);
 
 /***/ }),
 /* 41 */
 /***/ (function(module, exports, __webpack_require__) {
 
 exports = module.exports = __webpack_require__(7)();
-exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", ""]);
+exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", ""]);
 
 /***/ }),
 /* 42 */

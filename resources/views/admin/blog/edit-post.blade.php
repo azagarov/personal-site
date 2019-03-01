@@ -4,28 +4,28 @@
 
 @section('page-header')
     @if($post->id)
-        Edit Blog Post <small>#{{ $post->id }} [{{ $post->slug }}]</small>
+        Edit Blog Post <small id="title_part">#{{ $post->id }} [{{ $post->slug }}]</small>
     @else
-        Edit Blog Post <small>New</small>
+        Edit Blog Post <small id="title_part">New</small>
     @endif
 @endsection
 
 @section('breadcrumb')
     <li><a href="/admin/blog/posts"><i class="fa fa-pencil-square-o"></i> Blog Posts</a></li>
     @if($post->id)
-        <li class="active">Edit Post #{{ $post->id }}</li>
+        <li class="active" id="bc_part">Edit Post #{{ $post->id }}</li>
     @else
-        <li class="active">Create New Blog Post</li>
+        <li class="active" id="bc_part">Create New Blog Post</li>
     @endif
 @endsection
 
 @push('middle_scripts')
     <script src="/bower_components/AdminLTE/plugins/select2/select2.full.min.js"></script>
+    <script src="/bower_components/AdminLTE/plugins/datepicker/bootstrap-datepicker.js"></script>
+    <script src="/bower_components/AdminLTE/plugins/ckeditor/ckeditor.js"></script>
 @endpush
 
 @push('scripts')
-    <script src="/bower_components/AdminLTE/plugins/datepicker/bootstrap-datepicker.js"></script>
-    <script src="/bower_components/AdminLTE/plugins/ckeditor/ckeditor.js"></script>
 @endpush
 
 @push('styles')
@@ -47,9 +47,8 @@
         </div>
     @endif
 
-    <EditPostGeneral inline-template v-cloak ref="mainInfo"
-         _post="{{ json_encode($post) }}"
-         _categories="{{json_encode($post->categories->map(function($x) {return $x->id;}))}}"
+    <EditPostGeneral inline-template v-cloak ref="main"
+         _id="{{ $post->id }}"
     >
     <div class="box box-primary">
         <div class="box-header with-border">
@@ -125,7 +124,7 @@
                         Categories
                     </label>
 
-                    <select class="form-control select2" multiple="multiple" data-placeholder="Select One Or Few Categories ..." style="width: 100%;" name="categories" v-model="post.categories">
+                    <select class="form-control select2 categories" multiple="multiple" data-placeholder="Select One Or Few Categories ..." style="width: 100%;" name="categories" v-model="post.categories">
                         @foreach($categories as $category)
                             @php
                                 $cat = $category->content('en');
@@ -150,7 +149,6 @@
         </form>
     </div>
     </EditPostGeneral>
-    @if($post->id)
 
     @php
         $languagesList = [
@@ -167,7 +165,8 @@
         $languagesList[$selectedLocale]['active'] = ' active';
     @endphp
 
-    <div class="nav-tabs-custom">
+    {{--@if($post->id)--}}
+    <div class="nav-tabs-custom" v-if="hasPostId && postId">
         <ul class="nav nav-tabs">
             <li class="pull-left header"><i class="fa fa-language"></i> Languages &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</li>
             @foreach($languagesList as $lang)
@@ -182,8 +181,10 @@
         </div>
         <!-- /.tab-content -->
     </div>
+    {{--@endif--}}
     <!-- nav-tabs-custom -->
-            <div class="modal fade" :class="'modal-' + modal.type" id="post-modal">
+
+    <div class="modal fade" :class="'modal-' + modal.type" id="post-modal">
                 <div class="modal-dialog">
                     <div class="modal-content">
                         <div class="modal-header">
@@ -209,23 +210,5 @@
 </EditPostMain>
 </div>
 
-    @push('scripts')
-    <script type="text/javascript">
-        @foreach($languagesList as $lang)
-            CKEDITOR.replace('html_content_{{ $lang['locale'] }}');
-        @endforeach
-    </script>
-    @endpush
 
-    @endif
-
-    @push('scripts')
-    <script type="text/javascript">
-        $(document).ready(function() {
-            $('#date_occurred').datepicker({
-                autoclose: true
-            });
-        });
-    </script>
-    @endpush
 @endsection

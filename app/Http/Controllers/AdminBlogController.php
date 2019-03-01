@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\BlogCategory;
 use App\BlogPost;
+use App\Contracts\Blog;
 use Illuminate\Http\Request;
 
 class AdminBlogController extends Controller
@@ -65,6 +66,23 @@ class AdminBlogController extends Controller
 	    }));
     }
 
+    public function PostGetAjax($id, Request $request) {
+    	if(is_numeric($id) && $post = BlogPost::find($id)) {
+		    $response = $post->toArray();
+		    $response['categories'] = $post->categories->map(function($x) {return $x->id;});
+		    if($ts = strtotime($response['date_occurred'])) {
+		    	$response['date_occurred'] = date('m/d/Y', $ts);
+		    }
+	    } else {
+    		$response = [
+			    'status' => BlogPost::STATUS_PRIVATE,
+			    'main_order' => 0,
+			    'categories' => [],
+		    ];
+	    }
+	    return response()->json($response);
+    }
+
     public function EditPost($postId, Request $request) {
 
     	if($postId == 'new') {
@@ -110,7 +128,7 @@ class AdminBlogController extends Controller
         return response()->json($response);
     }
 
-    private function _normalizeMainInfoRequest(array $input) {
+    private function _normalizePostMainInfoRequest(array $input) {
     	$req = new \stdClass();
     	$req->id = $input['id'] ?? false;
     	$req->slug = $input['slug'] ?? '';
@@ -123,10 +141,10 @@ class AdminBlogController extends Controller
     	return $req;
     }
 
-    public function PostSaveAjax(Request $request) {
+    public function PostSaveAjax($id, Request $request) {
     	if(!isset($request->post)) return abort(500);
 
-	    $p = $this->_normalizeMainInfoRequest($request->post);
+	    $p = $this->_normalizePostMainInfoRequest($request->post);
 
 	    if(!$p->id) {
 		    $post = new BlogPost();
@@ -175,6 +193,47 @@ class AdminBlogController extends Controller
 
 
     	return response()->json(['ok' => $ok, 'post' => $post, 'categories' => $post->categories->map(function($x) {return $x->id;}), ]);
+    }
+
+    private function _normalizePostLangInfoRequest($input) {
+	    $req = new \stdClass();
+	    $req->annotation = $input['annotation'] ?? "";
+	    $req->html_content = $input['html_content'] ?? "";
+	    $req->title = $input['title'] ?? "";
+	    $req->place_name = $input['place_name'] ?? null;
+	    $req->place_description = $input['place_description'] ?? null;
+	    return $req;
+
+    }
+
+    public function PostLangGetAjax($id, $locale, Request $request) {
+    	return response()->json(BlogPost::find($id)->content($locale));
+    }
+
+    public function PostLangSaveAjax($id, $locale, Request $request) {
+    	if(!$request->postId) return abort(500);
+    	if(!$request->get('locale')) return abort(500);
+    	if(!$request->get('content')) return abort(500);
+
+    	$post = BlogPost::find($request->postId);
+    	if(!$post) return abort(500);
+
+	    $p = $this->_normalizePostLangInfoRequest($request->get('content'));
+
+	    $content = $post->content($request->get('locale'));
+
+	    $content->title = $p->title;
+	    $content->annotation = $p->annotation;
+	    $content->html_content = $p->html_content;
+	    $content->place_name = $p->place_name;
+	    $content->place_description = $p->place_description;
+
+	    $ok = $content->save();
+
+    	return response()->json([
+    		'ok' => $ok,
+		    'content' => $content,
+	    ]);
     }
 
     public function SavePost($postId, Request $request) {
