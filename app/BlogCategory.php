@@ -13,6 +13,24 @@ class BlogCategory extends Model implements BlogCategoryContract
 	const STATUS_PRIVATE = 'private';
 	const STATUS_DELETED = 'deleted';
 
+
+	public function __get( $key ) {
+
+		if(in_array($key, ['en', 'es', 'ru'])) {
+			return $this->content($key);
+		}
+
+		if(in_array($key, ['title', 'description', ])) {
+			$locale = \App::getLocale();
+			$content = $this->content($locale);
+			return $content->$key;
+		}
+
+
+		return parent::__get( $key );
+	}
+
+
 	public function localeContents() {
 		return $this->hasMany('App\BlogCategoryContent', 'category_id');
 	}

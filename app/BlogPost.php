@@ -16,6 +16,11 @@ class BlogPost extends Model implements BlogPostContract
     }
 
     public function __get( $key ) {
+
+    	if(in_array($key, ['en', 'es', 'ru'])) {
+    		return $this->content($key);
+	    }
+
     	if(in_array($key, ['title', 'annotation', 'html_content', 'place_name', 'place_description', ])) {
 		    $locale = \App::getLocale();
     		$content = $this->content($locale);
@@ -26,17 +31,32 @@ class BlogPost extends Model implements BlogPostContract
 	    return parent::__get( $key );
     }
 
-	public function content($locale = 'en') {
-    	$content = $this->localeContents()->where('locale', '=', $locale)->first();
+    public function keywords() {
+    	return array_filter(array_map(function($x) {return trim($x);}, explode(',', $this->keywords)), function($x) {return (bool)$x;});
+    }
 
-    	if(!$content) {
-    		$content = new BlogPostContent();
-    		$content->post_id = $this->id;
-    		$content->locale = $locale;
+	/**
+	 * @param string $locale
+	 *
+	 * @return BlogPostContent
+	 */
+	public function content($locale = 'en') {
+    	if(!isset($this->_content[$locale])) {
+		    $content = $this->localeContents()->where('locale', '=', $locale)->first();
+
+		    if(!$content) {
+			    $content = new BlogPostContent();
+			    $content->post_id = $this->id;
+			    $content->locale = $locale;
+		    }
+
+		    $this->_content[$locale] = $content;
 	    }
 
-    	return $content;
+    	return $this->_content[$locale];
     }
+
+    private $_content = [];
 
     public function author() {
     	return $this->belongsTo('App\User');

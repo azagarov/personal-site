@@ -17,6 +17,54 @@ class AdminBlogController extends Controller
 	    ]);
     }
 
+    public function PostsListAjax(Request $request) {
+    	$list = BlogPost::where('status', '<>', BlogPost::STATUS_DELETED)->get();
+
+    	return response()->json($list->map(function($x) {
+		    /**
+		     * @var BlogPost $x
+		     */
+
+		    $locales = array_keys($this->_langNames);
+
+    		$p = [
+    			'id' => $x->id,
+//			    'title' => $x->en->title,
+			    'slug' => $x->slug,
+			    'status' => $x->status,
+			    'keywords' => $x->keywords(),
+
+			    'en' => [],
+			    'es' => [],
+			    'ru' => [],
+		    ];
+
+    		foreach($locales as $locale) {
+
+			    $color = 'red';
+			    if($x->$locale->id) {
+				    $color = 'yellow';
+				    if($x->$locale->title) {
+					    $color = 'blue';
+					    if($x->$locale->html_content) {
+						    $color = 'green';
+					    }
+				    }
+			    }
+
+			    $p[$locale] = [
+    				'title' => $x->$locale->title,
+				    'color' => $color,
+    				'categories' => $x->categories->map(function($c) use($locale) {
+					    return $c->$locale->title;
+				    }),
+			    ];
+		    }
+
+		    return $p;
+	    }));
+    }
+
     public function EditPost($postId, Request $request) {
 
     	if($postId == 'new') {

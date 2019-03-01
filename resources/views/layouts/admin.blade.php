@@ -7,6 +7,9 @@ scratch. This page gets rid of all links and provides the needed markup only.
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
     <title>Web Diver Admin - @yield('title')</title>
     <!-- Tell the browser to be responsive to screen width -->
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
@@ -34,19 +37,21 @@ scratch. This page gets rid of all links and provides the needed markup only.
 <!-- REQUIRED JS SCRIPTS -->
 
 <!-- jQuery 2.2.3 -->
-    <script src="/bower_components/AdminLTE/plugins/jQuery/jquery-2.2.3.min.js"></script>
+    {{--<script src="/bower_components/AdminLTE/plugins/jQuery/jquery-2.2.3.min.js"></script>--}}
 <!-- Bootstrap 3.3.6 -->
-    <script src="/bower_components/AdminLTE/bootstrap/js/bootstrap.min.js"></script>
+    {{--<script src="/bower_components/AdminLTE/bootstrap/js/bootstrap.min.js"></script>--}}
 <!-- AdminLTE App -->
-    <script src="/bower_components/AdminLTE/dist/js/app.min.js"></script>
+    {{--<script src="/bower_components/AdminLTE/dist/js/app.min.js"></script>--}}
 
 <!-- Optionally, you can add Slimscroll and FastClick plugins.
      Both of these plugins are recommended to enhance the
      user experience. Slimscroll is required when using the
      fixed layout. -->
 
-
-    @stack('scripts')
+    <script type="text/javascript">
+        var _csrf_token = '{{ csrf_token() }}';
+    </script>
+    @stack('head_scripts')
     @stack('styles')
 
 </head>
@@ -128,14 +133,21 @@ desired effect
 </div>
 <!-- ./wrapper -->
 
+
+<script type="text/javascript" src="/js/app.js"></script>
+<script type="text/javascript" src="/js/admin-blog.js"></script>
+<script src="/bower_components/AdminLTE/dist/js/app.min.js"></script>
+
 <script type="text/javascript">
-$(document).ready(function() {
-    $(".btn-logout").click(function(e) {
-        e.preventDefault();
-        document.forms['logout-form'].submit();
+    $(document).ready(function() {
+        $(".btn-logout").click(function(e) {
+            e.preventDefault();
+            document.forms['logout-form'].submit();
+        });
     });
-});
 </script>
+
+@stack('scripts')
 
 </body>
 </html>

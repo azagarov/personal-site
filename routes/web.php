@@ -47,6 +47,7 @@ $router->group(['middleware' => ['check.locale']], function($router) {
 			// *************************** Blog Administration ********************************
 
 			Route::get('/admin/blog/posts', 'AdminBlogController@PostsList');
+			Route::post('/admin/blog/posts', 'AdminBlogController@PostsListAjax');
 			Route::get('/admin/blog/edit-post/{postId}', 'AdminBlogController@EditPost');
 
 			Route::post('/admin/blog/save-post/{postId}', 'AdminBlogController@SavePost');

@@ -55,7 +55,7 @@ class BlogCategoriesSeeder extends Seeder
 				    'description' => '',
 			    ],
 			    'ru' => [
-				    'title' => 'Разработка Програмного Обеспечения',
+				    'title' => 'Разработка ПО',
 				    'description' => '',
 			    ],
 		    ],

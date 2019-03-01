@@ -23,7 +23,6 @@
     <script src="/bower_components/AdminLTE/plugins/datepicker/bootstrap-datepicker.js"></script>
     <script src="/bower_components/AdminLTE/plugins/ckeditor/ckeditor.js"></script>
     <script src="/bower_components/AdminLTE/plugins/select2/select2.full.min.js"></script>
-
 @endpush
 
 @push('styles')
@@ -33,6 +32,10 @@
 
 @section('content')
 
+<div id="admin_blog" v-cloak>
+<EditPostMain inline-template v-cloak>
+<div class="vue-wrapper">
+
     @if(session('status'))
         <div class="alert alert-success alert-dismissible">
             <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
@@ -41,6 +44,7 @@
         </div>
     @endif
 
+    <EditPostGeneral inline-template v-cloak>
     <div class="box box-primary">
         <div class="box-header with-border">
             <h3 class="box-title">Main Post Info</h3>
@@ -79,7 +83,7 @@
                 </div>
                 <div class="form-group">
                     <label>Main Order</label>
-                    <input type="text" class="form-control" placeholder="Main Order ..." value="{{ $post->main_order }}" name="main_order"/>
+                    <input type="number" class="form-control" placeholder="Main Order ..." value="{{ $post->main_order }}" name="main_order"/>
                     <span class="help-block">Integer : 1, 2, ..., 100, ...</span>
                 </div>
 
@@ -140,7 +144,7 @@
             </div>
         </form>
     </div>
-
+    </EditPostGeneral>
     @if($post->id)
 
     @php
@@ -174,15 +178,21 @@
         <!-- /.tab-content -->
     </div>
     <!-- nav-tabs-custom -->
+</div>
+</EditPostMain>
+</div>
 
+    @push('scripts')
     <script type="text/javascript">
         @foreach($languagesList as $lang)
             CKEDITOR.replace('html_content_{{ $lang['locale'] }}');
         @endforeach
     </script>
+    @endpush
 
     @endif
 
+    @push('scripts')
     <script type="text/javascript">
         $(document).ready(function() {
             $('#date_occurred').datepicker({
@@ -193,4 +203,5 @@
 
         });
     </script>
+    @endpush
 @endsection
