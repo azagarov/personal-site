@@ -19,10 +19,13 @@
     @endif
 @endsection
 
+@push('middle_scripts')
+    <script src="/bower_components/AdminLTE/plugins/select2/select2.full.min.js"></script>
+@endpush
+
 @push('scripts')
     <script src="/bower_components/AdminLTE/plugins/datepicker/bootstrap-datepicker.js"></script>
     <script src="/bower_components/AdminLTE/plugins/ckeditor/ckeditor.js"></script>
-    <script src="/bower_components/AdminLTE/plugins/select2/select2.full.min.js"></script>
 @endpush
 
 @push('styles')
@@ -44,7 +47,10 @@
         </div>
     @endif
 
-    <EditPostGeneral inline-template v-cloak>
+    <EditPostGeneral inline-template v-cloak ref="mainInfo"
+         _post="{{ json_encode($post) }}"
+         _categories="{{json_encode($post->categories->map(function($x) {return $x->id;}))}}"
+    >
     <div class="box box-primary">
         <div class="box-header with-border">
             <h3 class="box-title">Main Post Info</h3>
@@ -57,33 +63,40 @@
                 $_urlPostId = 'new';
             }
         @endphp
-        <form role="form" method="post" target="_self" action="/admin/blog/save-post/{{ $_urlPostId }}">
+        <form role="form" name="general_post_form" method="post" target="_self" action="/admin/blog/save-post/{{ $_urlPostId }}">
             {{ csrf_field() }}
-            <input type="hidden" name="postId" value="{{ $post->id }}" />
+            <input type="hidden" name="postId" v-model="post.id" />
 
             <div class="box-body">
-                <div class="form-group">
-                    <label>Slug</label>
-                    <input type="text" class="form-control" placeholder="Slug..." value="{{ $post->slug }}" name="slug" />
-                    <span class="help-block"><strong style="color:black;">/</strong>url-will-be-like-this<strong style="color:black;">/</strong></span>
+                <div class="form-group" :class="slugIsChecking ? 'has-warning' : slugHasError ? 'has-error' : slugChanged && slugOk ? 'has-success' : ''">
+                    <label>
+                        <i class="fa fa-spinner fa-spin" v-if="slugIsChecking"></i>
+                        <i class="fa fa-times-circle-o" v-else-if="slugHasError"></i>
+                        <i class="fa fa-check" v-else-if="slugChanged && slugOk"></i>
+                        Slug
+                    </label>
+                    <input type="text" class="form-control" placeholder="Slug..." v-model="post.slug" name="slug" @change="checkSlug" />
+                    <span v-if="slugHasError" class="help-block slug" v-html="errors.slug"></span>
+                    <span v-else class="help-block">http://webdiver.org/blog<strong style="color:black;">/</strong><span style="color:black;" v-html="post.slug"></span><strong style="color:black;">/</strong></span>
                 </div>
 
                 <div class="form-group">
                     <label>Status</label>
-                    <select class="form-control" name="status">
+                    <select class="form-control" name="status" v-model="post.status">
                         @foreach(App\BlogPost::GetFullStatusesList() as $key => $value)
-                            <option value="{{ $key }}" @if($key == $post->status) selected="selected" @endif>{{ $value }}</option>
+                            <option value="{{ $key }}">{{ $value }}</option>
+                            {{--@if($key == $post->status) selected="selected" @endif--}}
                         @endforeach
                     </select>
                 </div>
                 <div class="form-group">
                     <label>Place Coordinates</label>
-                    <input type="text" class="form-control" placeholder="Place Coordinates ..." value="{{ $post->place_coordinates }}" name="place_coordinates"/>
+                    <input type="text" class="form-control" placeholder="Place Coordinates ..." v-model="post.place_coordinates" name="place_coordinates"/>
                     <span class="help-block">For example : 54.9915352,73.225426</span>
                 </div>
                 <div class="form-group">
                     <label>Main Order</label>
-                    <input type="number" class="form-control" placeholder="Main Order ..." value="{{ $post->main_order }}" name="main_order"/>
+                    <input type="number" class="form-control" placeholder="Main Order ..." v-model="post.main_order" name="main_order"/>
                     <span class="help-block">Integer : 1, 2, ..., 100, ...</span>
                 </div>
 
@@ -94,16 +107,7 @@
                         <div class="input-group-addon">
                             <i class="fa fa-calendar"></i>
                         </div>
-                        @php
-                            if($post->date_occurred) {
-                                $dateOccurredObj = new \DateTime($post->date_occurred);
-                                $dateOccurred = $dateOccurredObj->format('m/d/Y');
-                            } else {
-                                $dateOccurred = '';
-                            }
-                        @endphp
-
-                        <input type="text" class="form-control pull-right" id="date_occurred" value="{{ $dateOccurred }}" name="date_occurred" />
+                        <input type="text" class="form-control pull-right" id="date_occurred" v-model="post.date_occurred" name="date_occurred" />
                     </div>
 
                     <!-- /.input group -->
@@ -111,28 +115,26 @@
 
                 <div class="form-group">
                     <label>Keywords</label>
-                    <textarea class="form-control" rows="3" placeholder="Keywords ..." name="keywords">{{ $post->keywords }}</textarea>
+                    <textarea class="form-control" rows="3" placeholder="Keywords ..." name="keywords" v-model="post.keywords"></textarea>
                     <span class="help-block">Comma separated : history, living, diving, ...</span>
                 </div>
 
-                <div class="form-group">
-                    <label>Categories</label>
+                <div class="form-group" :class="saving && !validation.categories ? 'has-error' : ''">
+                    <label>
+                        <i class="fa fa-times-circle-o" v-if="saving && !validation.categories"></i>
+                        Categories
+                    </label>
 
-                    @php
-                        $_catIds = [];
-                        foreach($post->categories as $_cat) {
-                            $_catIds[] = $_cat->id;
-                        }
-                    @endphp
-
-                    <select class="form-control select2" multiple="multiple" data-placeholder="Select One Or Few Categories ..." style="width: 100%;" name="categoryIds[]">
+                    <select class="form-control select2" multiple="multiple" data-placeholder="Select One Or Few Categories ..." style="width: 100%;" name="categories" v-model="post.categories">
                         @foreach($categories as $category)
                             @php
                                 $cat = $category->content('en');
                             @endphp
-                            <option value="{{ $category->id }}" @if(in_array($category->id, $_catIds)) selected="selected" @endif >{{ $cat->title }}</option>
+                            <option value="{{ $category->id }}">{{ $cat->title }}</option>
+                            {{--@if(in_array($category->id, $_catIds)) selected="selected" @endif--}}
                         @endforeach
                     </select>
+                    <span v-if="saving && !validation.categories" class="help-block categories" v-html="errors.categories"></span>
                 </div>
 
 
@@ -140,7 +142,10 @@
             <!-- /.box-body -->
 
             <div class="box-footer">
-                <button type="submit" class="btn btn-primary">Save General Post Information</button>
+                <button type="button" class="btn btn-primary" @click="save" :disabled="isSaving">
+                    <i class="fa fa-spinner fa-spin" v-if="isSaving"></i>
+                    Save General Post Information
+                </button>
             </div>
         </form>
     </div>
@@ -178,6 +183,28 @@
         <!-- /.tab-content -->
     </div>
     <!-- nav-tabs-custom -->
+            <div class="modal fade" :class="'modal-' + modal.type" id="post-modal">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span></button>
+                            <h4 class="modal-title" v-text="modal.title"></h4>
+                        </div>
+                        <div class="modal-body">
+                            <p v-text="modal.body">One fine body&hellip;</p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-outline pull-left" data-dismiss="modal">Close</button>
+                            <button v-if="modal.button" type="button" class="btn btn-outline">Save changes</button>
+                        </div>
+                    </div>
+                    <!-- /.modal-content -->
+                </div>
+                <!-- /.modal-dialog -->
+            </div>
+            <!-- /.modal -->
+
 </div>
 </EditPostMain>
 </div>
@@ -198,9 +225,6 @@
             $('#date_occurred').datepicker({
                 autoclose: true
             });
-
-            $(".select2").select2();
-
         });
     </script>
     @endpush

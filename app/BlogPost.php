@@ -31,7 +31,7 @@ class BlogPost extends Model implements BlogPostContract
 	    return parent::__get( $key );
     }
 
-    public function keywords() {
+    public function pkeywords() {
     	return array_filter(array_map(function($x) {return trim($x);}, explode(',', $this->keywords)), function($x) {return (bool)$x;});
     }
 

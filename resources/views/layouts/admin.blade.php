@@ -135,6 +135,7 @@ desired effect
 
 
 <script type="text/javascript" src="/js/app.js"></script>
+@stack('middle_scripts')
 <script type="text/javascript" src="/js/admin-blog.js"></script>
 <script src="/bower_components/AdminLTE/dist/js/app.min.js"></script>
 

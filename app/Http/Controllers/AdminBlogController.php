@@ -32,7 +32,7 @@ class AdminBlogController extends Controller
 //			    'title' => $x->en->title,
 			    'slug' => $x->slug,
 			    'status' => $x->status,
-			    'keywords' => $x->keywords(),
+			    'keywords' => $x->pkeywords(),
 
 			    'en' => [],
 			    'es' => [],
@@ -69,10 +69,13 @@ class AdminBlogController extends Controller
 
     	if($postId == 'new') {
 		    $post = new BlogPost();
+		    $post->status = BlogPost::STATUS_PRIVATE;
+		    $post->main_order = 0;
 	    } else {
 		    $post = BlogPost::find($postId);
 	    }
 
+//var_dump(json_encode($post));
     	return view('admin.blog.edit-post')->with([
     		'post' => $post,
 		    'categories' => BlogCategory::all(),
@@ -80,6 +83,99 @@ class AdminBlogController extends Controller
 	    ]);
     }
 
+    public function CheckSlugAjax(Request $request) {
+    	$response = new \stdClass();
+    	$response->ok = true;
+
+    	$q = BlogPost::where('slug', $request->slug);
+    	if($request->id) {
+    		$q->where('id', '<>', $request->id);
+	    }
+	    $post = $q->first();
+    	if($post) {
+		    $response->ok = false;
+		    $response->type = 'post';
+		    $response->id = $post->id;
+		    $response->title = $post->en->title;
+	    } else {
+		    $category = BlogCategory::GetBySlug($request->slug);
+		    if($category) {
+			    $response->ok = false;
+			    $response->type = 'category';
+			    $response->id = $category->id;
+			    $response->title = $category->en->title;
+		    }
+	    }
+
+        return response()->json($response);
+    }
+
+    private function _normalizeMainInfoRequest(array $input) {
+    	$req = new \stdClass();
+    	$req->id = $input['id'] ?? false;
+    	$req->slug = $input['slug'] ?? '';
+    	$req->status = $input['status'] ?? BlogPost::STATUS_PRIVATE;
+    	$req->main_order = $input['main_order'] ?? 0;
+    	$req->date_occurred = $input['date_occurred'] ?? null;
+    	$req->place_coordinates = $input['place_coordinates'] ?? null;
+    	$req->keywords = $input['keywords'] ?? null;
+    	$req->categories = $input['categories'] ?? [];
+    	return $req;
+    }
+
+    public function PostSaveAjax(Request $request) {
+    	if(!isset($request->post)) return abort(500);
+
+	    $p = $this->_normalizeMainInfoRequest($request->post);
+
+	    if(!$p->id) {
+		    $post = new BlogPost();
+
+		    $authorId = \Auth::id();
+		    if(!$authorId) {
+			    $authorId = 1; // Hardcoded My ID
+		    }
+		    $post->author_id = $authorId;
+
+		    $post->views_total = 0;
+		    $post->views_unique = 0;
+		    $post->shares_count = 0;
+
+	    } else {
+		    $post = BlogPost::find($p->id);
+	    }
+
+//	    	    return response()->json(['r' => $request, 'x' => $post]);
+
+	    /**
+	     * @var BlogPost $post
+	     */
+
+	    $post->slug = $p->slug;
+	    $post->status = $p->status;
+	    $post->main_order = $p->main_order;
+
+	    if(strtotime($p->date_occurred)) {
+		    $_obj = new \DateTime($p->date_occurred);
+		    $post->date_occurred = $_obj->format('Y-m-d');
+	    } else {
+		    $post->date_occurred = null;
+	    }
+
+	    $post->place_coordinates = $p->place_coordinates;
+	    $post->keywords = $p->keywords;
+
+	    $ok = $post->save();
+
+	    if($p->categories) {
+		    $post->categories()->sync($p->categories);
+	    } else {
+		    $post->categories()->sync([]);
+	    }
+
+
+    	return response()->json(['ok' => $ok, 'post' => $post, 'categories' => $post->categories->map(function($x) {return $x->id;}), ]);
+    }
 
     public function SavePost($postId, Request $request) {
 
