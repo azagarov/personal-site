@@ -1,3 +1,6 @@
+<EditPostLang v-cloak inline-template
+  _content="{{ json_encode($post->{$lang['locale']}) }}"
+>
 <div class="tab-pane{{ $lang['active'] }}" id="tab_lang_{{ $lang['locale'] }}">
     @php
         $content = $post->content($lang['locale']);
@@ -37,3 +40,4 @@
         </div>
     </form>
 </div>
+</EditPostLang>
