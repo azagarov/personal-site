@@ -68,11 +68,7 @@ class AdminBlogController extends Controller
 
     public function PostGetAjax($id, Request $request) {
     	if(is_numeric($id) && $post = BlogPost::find($id)) {
-		    $response = $post->toArray();
-		    $response['categories'] = $post->categories->map(function($x) {return $x->id;});
-		    if($ts = strtotime($response['date_occurred'])) {
-		    	$response['date_occurred'] = date('m/d/Y', $ts);
-		    }
+    		$response = $this->_getPostJsonObj($post);
 	    } else {
     		$response = [
 			    'status' => BlogPost::STATUS_PRIVATE,
@@ -81,6 +77,15 @@ class AdminBlogController extends Controller
 		    ];
 	    }
 	    return response()->json($response);
+    }
+
+    private function _getPostJsonObj(BlogPost $post) {
+	    $response = $post->toArray();
+	    $response['categories'] = $post->categories->map(function($x) {return $x->id;});
+	    if($ts = strtotime($response['date_occurred'])) {
+		    $response['date_occurred'] = date('m/d/Y', $ts);
+	    }
+	    return $response;
     }
 
     public function EditPost($postId, Request $request) {
@@ -192,7 +197,7 @@ class AdminBlogController extends Controller
 	    }
 
 
-    	return response()->json(['ok' => $ok, 'post' => $post, 'categories' => $post->categories->map(function($x) {return $x->id;}), ]);
+    	return response()->json(['ok' => $ok, 'post' => $this->_getPostJsonObj($post), ]);
     }
 
     private function _normalizePostLangInfoRequest($input) {

@@ -70,9 +70,11 @@ export default {
                 this.post.id = v;
             }
         },
+
         slug() {
             return this.post.slug;
         },
+
         valid() {
             return Object.values(this.validation).reduce((c, x) => c && x, true);
         },
@@ -99,6 +101,7 @@ export default {
             return (this.saving && !this.validation.slug) || (this.slugChanged && (!this.slugOk || !this.validation.slug));
         }
     },
+
     watch: {
         slug(val, old) {
             this.slugChanged = false;
@@ -114,6 +117,25 @@ export default {
         postId(val, old) {
             this.$parent.hasPostId = true;
             return val;
+        },
+
+        post: {
+            handler(_new, _old) {
+
+                if(_new == _old) {
+                    this.$parent.$refs.dashboard.unsaved.main = true;
+                }
+                // console.log(_new.place_coordinates, _old.place_coordinates);
+                // const x = Object.keys(_new).map(key => {return {key:key, r:_new[key] == _old[key]};});
+                // console.log(x);
+            },
+            deep: true
+        },
+
+        'post.place_coordinates' : {
+            handler(x, y) {
+                // console.log(x, y);
+            }
         }
     },
     methods: {
@@ -163,11 +185,11 @@ export default {
             }).then(response => {
                 const data = response.data;
                 if(data.ok) {
-                    this.$parent.openModal({
-                        type: 'success',
-                        title: 'Success',
-                        body: this.post.id ? 'Main Post Data has Successfully been Updated!' : 'New Post has Successfully been Created!'
-                    });
+                    // this.$parent.openModal({
+                    //     type: 'success',
+                    //     title: 'Success',
+                    //     body: this.post.id ? 'Main Post Data has Successfully been Updated!' : 'New Post has Successfully been Created!'
+                    // });
 
                     if(!this.post.id) {
                         window.history.replaceState({}, '', "/admin/blog/edit-post/" + data.post.id);
@@ -175,6 +197,8 @@ export default {
                     }
                     $("#title_part").html("#" + data.post.id + " [" + data.post.slug + "]");
                     this.post = data.post;
+                    this.$parent.$refs.dashboard.unsaved.main = false;
+                    this.$parent.$refs.dashboard.hasSaved = true;
                 } else {
                     this.$parent.openModal({
                         type: 'danger',
@@ -193,6 +217,10 @@ export default {
                     body: "Error Occurred During Saving Data. Try again later."
                 });
             })
+        },
+
+        handleDataUpdate(field, value) {
+            console.log(field, value);
         }
     }
 }

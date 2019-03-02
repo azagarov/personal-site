@@ -2128,7 +2128,58 @@ var app = new Vue({
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-    // name: "edit-post-dashboard"
+    data: function data() {
+        return {
+            unsaved: {
+                main: false,
+                en: false,
+                es: false,
+                ru: false
+            },
+            hasSaved: false
+        };
+    },
+
+    computed: {
+        isSaving: function isSaving() {
+            return this.$parent.$refs.main.isSaving;
+        },
+        changed: function changed() {
+            return !this.$parent.postId || this.unsaved.main;
+        }
+    },
+
+    watch: {
+        unsaved: {
+            handler: function handler(_new, _old) {
+                console.log(Object.values(this.unsaved).reduce(function (c, x) {
+                    return c || x;
+                }, false));
+                if (Object.values(this.unsaved).reduce(function (c, x) {
+                    return c || x;
+                }, false)) {
+                    this.hasSaved = false;
+                }
+            },
+
+            deep: true
+            /*
+            hasSaved(_new, _old) {
+                // console.log(_new, _old);
+                if(_new) {
+                    setTimeout(() => {
+                        this.hasSaved = false;
+                    }, 3000);
+                }
+            }
+            */
+        } },
+
+    methods: {
+        save: function save() {
+            this.$parent.$refs.main.save();
+        }
+    }
 });
 
 /***/ }),
@@ -2213,6 +2264,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 this.post.id = v;
             }
         },
+
         slug: function slug() {
             return this.post.slug;
         },
@@ -2244,6 +2296,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             return this.saving && !this.validation.slug || this.slugChanged && (!this.slugOk || !this.validation.slug);
         }
     },
+
     watch: {
         slug: function slug(val, old) {
             var _this2 = this;
@@ -2261,6 +2314,27 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         postId: function postId(val, old) {
             this.$parent.hasPostId = true;
             return val;
+        },
+
+
+        post: {
+            handler: function handler(_new, _old) {
+
+                if (_new == _old) {
+                    this.$parent.$refs.dashboard.unsaved.main = true;
+                }
+                // console.log(_new.place_coordinates, _old.place_coordinates);
+                // const x = Object.keys(_new).map(key => {return {key:key, r:_new[key] == _old[key]};});
+                // console.log(x);
+            },
+
+            deep: true
+        },
+
+        'post.place_coordinates': {
+            handler: function handler(x, y) {
+                // console.log(x, y);
+            }
         }
     },
     methods: {
@@ -2315,11 +2389,11 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             }).then(function (response) {
                 var data = response.data;
                 if (data.ok) {
-                    _this4.$parent.openModal({
-                        type: 'success',
-                        title: 'Success',
-                        body: _this4.post.id ? 'Main Post Data has Successfully been Updated!' : 'New Post has Successfully been Created!'
-                    });
+                    // this.$parent.openModal({
+                    //     type: 'success',
+                    //     title: 'Success',
+                    //     body: this.post.id ? 'Main Post Data has Successfully been Updated!' : 'New Post has Successfully been Created!'
+                    // });
 
                     if (!_this4.post.id) {
                         window.history.replaceState({}, '', "/admin/blog/edit-post/" + data.post.id);
@@ -2327,6 +2401,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                     }
                     $("#title_part").html("#" + data.post.id + " [" + data.post.slug + "]");
                     _this4.post = data.post;
+                    _this4.$parent.$refs.dashboard.unsaved.main = false;
+                    _this4.$parent.$refs.dashboard.hasSaved = true;
                 } else {
                     _this4.$parent.openModal({
                         type: 'danger',
@@ -2345,6 +2421,9 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                     body: "Error Occurred During Saving Data. Try again later."
                 });
             });
+        },
+        handleDataUpdate: function handleDataUpdate(field, value) {
+            console.log(field, value);
         }
     }
 });
@@ -2585,7 +2664,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /***/ (function(module, exports, __webpack_require__) {
 
 exports = module.exports = __webpack_require__(7)();
-exports.push([module.i, "\n\n\n\n\n\n\n\n", ""]);
+exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", ""]);
 
 /***/ }),
 /* 41 */
@@ -2606,7 +2685,7 @@ exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\
 /***/ (function(module, exports, __webpack_require__) {
 
 exports = module.exports = __webpack_require__(7)();
-exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", ""]);
+exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", ""]);
 
 /***/ }),
 /* 44 */

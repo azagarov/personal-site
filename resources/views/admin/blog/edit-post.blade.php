@@ -33,10 +33,14 @@
 <link rel="stylesheet" href="/bower_components/AdminLTE/plugins/select2/select2.min.css">
     <style>
         .fade-enter-active, .fade-leave-active {
-            transition: opacity .9s;
+            transition: opacity 1.5s;
         }
         .fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
             opacity: 0;
+        }
+
+        .save-btn {
+            transition: all .5s linear;
         }
     </style>
 
@@ -99,64 +103,67 @@
                         @endforeach
                     </select>
                 </div>
-                <div class="form-group">
-                    <label>Place Coordinates</label>
-                    <input type="text" class="form-control" placeholder="Place Coordinates ..." v-model="post.place_coordinates" name="place_coordinates"/>
-                    <span class="help-block">For example : 54.9915352,73.225426</span>
-                </div>
-                <div class="form-group">
-                    <label>Main Order</label>
-                    <input type="number" class="form-control" placeholder="Main Order ..." v-model="post.main_order" name="main_order"/>
-                    <span class="help-block">Integer : 1, 2, ..., 100, ...</span>
-                </div>
-
-                <div class="form-group">
-                    <label>Date Occurred:</label>
-
-                    <div class="input-group date">
-                        <div class="input-group-addon">
-                            <i class="fa fa-calendar"></i>
+                <div class="row">
+                    <div class="col-xs-4">
+                        <div class="form-group">
+                            <label>Place Coordinates</label>
+                            <input type="text" class="form-control" placeholder="Place Coordinates ..." v-model="post.place_coordinates" name="place_coordinates"/>
+                            <span class="help-block">For example : 54.9915352,73.225426</span>
                         </div>
-                        <input type="text" class="form-control pull-right" id="date_occurred" v-model="post.date_occurred" name="date_occurred" />
                     </div>
+                    <div class="col-xs-4">
+                        <div class="form-group">
+                            <label>Main Order</label>
+                            <input type="number" class="form-control" placeholder="Main Order ..." v-model="post.main_order" name="main_order"/>
+                            <span class="help-block">Integer : 1, 2, ..., 100, ...</span>
+                        </div>
+                    </div>
+                    <div class="col-xs-4">
+                        <div class="form-group">
+                            <label>Date Occurred:</label>
 
+                            <div class="input-group date">
+                                <div class="input-group-addon">
+                                    <i class="fa fa-calendar"></i>
+                                </div>
+                                <input type="text" class="form-control pull-right" id="date_occurred" v-model="post.date_occurred" name="date_occurred" />
+                            </div>
+                        </div>
+                    </div>
                     <!-- /.input group -->
                 </div>
 
-                <div class="form-group">
-                    <label>Keywords</label>
-                    <textarea class="form-control" rows="3" placeholder="Keywords ..." name="keywords" v-model="post.keywords"></textarea>
-                    <span class="help-block">Comma separated : history, living, diving, ...</span>
+                <div class="row">
+                    <div class="col-xs-6">
+                        <div class="form-group" :class="saving && !validation.categories ? 'has-error' : ''">
+                            <label>
+                                <i class="fa fa-times-circle-o" v-if="saving && !validation.categories"></i>
+                                Categories
+                            </label>
+
+                            <select class="form-control select2 categories" multiple="multiple" data-placeholder="Select One Or Few Categories ..." style="width: 100%;" name="categories" v-model="post.categories">
+                                @foreach($categories as $category)
+                                    @php
+                                        $cat = $category->content('en');
+                                    @endphp
+                                    <option value="{{ $category->id }}">{{ $cat->title }}</option>
+                                    {{--@if(in_array($category->id, $_catIds)) selected="selected" @endif--}}
+                                @endforeach
+                            </select>
+                            <span v-if="saving && !validation.categories" class="help-block categories" v-html="errors.categories"></span>
+                        </div>
+                    </div>
+                    <div class="col-xs-6">
+                        <div class="form-group">
+                            <label>Keywords</label>
+                            <textarea class="form-control" rows="3" placeholder="Keywords ..." name="keywords" v-model="post.keywords"></textarea>
+                            <span class="help-block">Comma separated : history, living, diving, ...</span>
+                        </div>
+                    </div>
+
                 </div>
-
-                <div class="form-group" :class="saving && !validation.categories ? 'has-error' : ''">
-                    <label>
-                        <i class="fa fa-times-circle-o" v-if="saving && !validation.categories"></i>
-                        Categories
-                    </label>
-
-                    <select class="form-control select2 categories" multiple="multiple" data-placeholder="Select One Or Few Categories ..." style="width: 100%;" name="categories" v-model="post.categories">
-                        @foreach($categories as $category)
-                            @php
-                                $cat = $category->content('en');
-                            @endphp
-                            <option value="{{ $category->id }}">{{ $cat->title }}</option>
-                            {{--@if(in_array($category->id, $_catIds)) selected="selected" @endif--}}
-                        @endforeach
-                    </select>
-                    <span v-if="saving && !validation.categories" class="help-block categories" v-html="errors.categories"></span>
-                </div>
-
-
             </div>
             <!-- /.box-body -->
-
-            <div class="box-footer">
-                <button type="button" class="btn btn-primary" @click="save" :disabled="isSaving">
-                    <i class="fa fa-spinner fa-spin" v-if="isSaving"></i>
-                    Save General Post Information
-                </button>
-            </div>
         </form>
     </div>
     </EditPostGeneral>
@@ -168,6 +175,18 @@
                     <h3 class="box-title">Post dashboard</h3>
                 </div>
                 <div class="box-body">
+                    <div class="row">
+                        <div class="col-xs-6">
+                        </div>
+                    </div>
+                </div>
+                <div class="box-footer">
+                    <button type="button" class="btn save-btn" :class="hasSaved ? 'btn-success' : 'btn-primary'" @click="save" :disabled="isSaving || !changed">
+                        <i class="fa fa-spinner fa-spin" v-if="isSaving"></i>
+                        <i class="fa fa-check" v-if="hasSaved"></i>
+                        <span v-if="hasSaved">Saved OK</span>
+                        <span v-else>Save General Post Information</span>
+                    </button>
                 </div>
             </div>
     </EditPostDashboard>
@@ -206,7 +225,7 @@
         </div>
         <!-- /.tab-content -->
     </div>
-
+    </transition>
     <!-- nav-tabs-custom -->
 
     <div class="modal fade" :class="'modal-' + modal.type" id="post-modal">
