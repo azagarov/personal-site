@@ -17,6 +17,14 @@ export default {
         },
         changed() {
             return !this.$parent.postId || this.unsaved.main;
+        },
+        status: {
+            get() {
+                return this.$parent.$refs.main.post.status;
+            },
+            set(v) {
+                this.$parent.$refs.main.post.status = v;
+            }
         }
     },
 

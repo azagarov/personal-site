@@ -61,7 +61,7 @@
     @endif
 
     <div class="row">
-        <div class="col-xs-9">
+        <div class="col-xs-12 col-sm-12 col-md-8 col-lg-9">
     <EditPostGeneral inline-template v-cloak ref="main"
          _id="{{ $post->id }}"
     >
@@ -94,31 +94,22 @@
                     <span v-else class="help-block">http://webdiver.org/blog<strong style="color:black;">/</strong><span style="color:black;" v-html="post.slug"></span><strong style="color:black;">/</strong></span>
                 </div>
 
-                <div class="form-group">
-                    <label>Status</label>
-                    <select class="form-control" name="status" v-model="post.status">
-                        @foreach(App\BlogPost::GetFullStatusesList() as $key => $value)
-                            <option value="{{ $key }}">{{ $value }}</option>
-                            {{--@if($key == $post->status) selected="selected" @endif--}}
-                        @endforeach
-                    </select>
-                </div>
                 <div class="row">
-                    <div class="col-xs-4">
+                    <div class="col-lg-4 col-xs-12">
                         <div class="form-group">
                             <label>Place Coordinates</label>
                             <input type="text" class="form-control" placeholder="Place Coordinates ..." v-model="post.place_coordinates" name="place_coordinates"/>
                             <span class="help-block">For example : 54.9915352,73.225426</span>
                         </div>
                     </div>
-                    <div class="col-xs-4">
+                    <div class="col-lg-4 col-xs-6">
                         <div class="form-group">
                             <label>Main Order</label>
                             <input type="number" class="form-control" placeholder="Main Order ..." v-model="post.main_order" name="main_order"/>
                             <span class="help-block">Integer : 1, 2, ..., 100, ...</span>
                         </div>
                     </div>
-                    <div class="col-xs-4">
+                    <div class="col-lg-4 col-xs-6">
                         <div class="form-group">
                             <label>Date Occurred:</label>
 
@@ -134,7 +125,7 @@
                 </div>
 
                 <div class="row">
-                    <div class="col-xs-6">
+                    <div class="col-xs-12 col-lg-6">
                         <div class="form-group" :class="saving && !validation.categories ? 'has-error' : ''">
                             <label>
                                 <i class="fa fa-times-circle-o" v-if="saving && !validation.categories"></i>
@@ -153,7 +144,7 @@
                             <span v-if="saving && !validation.categories" class="help-block categories" v-html="errors.categories"></span>
                         </div>
                     </div>
-                    <div class="col-xs-6">
+                    <div class="col-xs-12 col-lg-6">
                         <div class="form-group">
                             <label>Keywords</label>
                             <textarea class="form-control" rows="3" placeholder="Keywords ..." name="keywords" v-model="post.keywords"></textarea>
@@ -168,13 +159,22 @@
     </div>
     </EditPostGeneral>
         </div>
-        <div class="col-xs-3">
+        <div class="col-xs-12 col-sm-12 col-md-4 col-lg-3">
     <EditPostDashboard inline-template v-cloak ref="dashboard">
             <div class="box box-primary">
                 <div class="box-header with-border">
                     <h3 class="box-title">Post dashboard</h3>
                 </div>
                 <div class="box-body">
+                    <div class="form-group">
+                        <label>Status</label>
+                        <select class="form-control" name="status" v-model="status">
+                            @foreach(App\BlogPost::GetFullStatusesList() as $key => $value)
+                                <option value="{{ $key }}">{{ $value }}</option>
+                                {{--@if($key == $post->status) selected="selected" @endif--}}
+                            @endforeach
+                        </select>
+                    </div>
                     <div class="row">
                         <div class="col-xs-6">
                         </div>

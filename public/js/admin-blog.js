@@ -2146,6 +2146,15 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         },
         changed: function changed() {
             return !this.$parent.postId || this.unsaved.main;
+        },
+
+        status: {
+            get: function get() {
+                return this.$parent.$refs.main.post.status;
+            },
+            set: function set(v) {
+                this.$parent.$refs.main.post.status = v;
+            }
         }
     },
 
@@ -2664,7 +2673,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /***/ (function(module, exports, __webpack_require__) {
 
 exports = module.exports = __webpack_require__(7)();
-exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", ""]);
+exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", ""]);
 
 /***/ }),
 /* 41 */
