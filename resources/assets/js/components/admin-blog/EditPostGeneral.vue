@@ -14,16 +14,22 @@ export default {
             autoclose: true
         });
 
+        this.slugTimer = false;
+
         if(this._id) {
             axios.get("/admin/blog/post/" + this._id).then(response => {
                 this.post = response.data;
                 this.$parent.hasPostId = true;
                 $('#date_occurred').datepicker('update', this.post.date_occurred);
                 $(".select2.categories").val(this.post.categories).trigger('change');
-
+                setTimeout(() => {
+                    this.slugTimer = true;
+                }, 1000);
             }).catch(e => {
                 console.log(e);
             });
+        } else {
+            this.slugTimer = true;
         }
 
     },
@@ -43,10 +49,13 @@ export default {
             },
             saving: false,
             isSaving: false,
+
             slugChanged: false,
             slugOk: true,
             slugIsChecking: false,
             slugDupe: {},
+
+            slugTimer: null,
         }
     },
 
@@ -91,6 +100,13 @@ export default {
     watch: {
         slug(val, old) {
             this.slugChanged = false;
+            // console.log("Occurred", this.slugTimer);
+            if(false !== this.slugTimer) {
+                clearTimeout(this.slugTimer);
+                this.slugTimer = setTimeout(() => {
+                    this.checkSlug();
+                }, 2000);
+            }
             return val;
         },
         postId(val, old) {

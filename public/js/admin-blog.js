@@ -2145,15 +2145,22 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             autoclose: true
         });
 
+        this.slugTimer = false;
+
         if (this._id) {
             axios.get("/admin/blog/post/" + this._id).then(function (response) {
                 _this.post = response.data;
                 _this.$parent.hasPostId = true;
                 $('#date_occurred').datepicker('update', _this.post.date_occurred);
                 $(".select2.categories").val(_this.post.categories).trigger('change');
+                setTimeout(function () {
+                    _this.slugTimer = true;
+                }, 1000);
             }).catch(function (e) {
                 console.log(e);
             });
+        } else {
+            this.slugTimer = true;
         }
     },
     data: function data() {
@@ -2172,10 +2179,13 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             },
             saving: false,
             isSaving: false,
+
             slugChanged: false,
             slugOk: true,
             slugIsChecking: false,
-            slugDupe: {}
+            slugDupe: {},
+
+            slugTimer: null
         };
     },
 
@@ -2222,7 +2232,16 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     },
     watch: {
         slug: function slug(val, old) {
+            var _this2 = this;
+
             this.slugChanged = false;
+            // console.log("Occurred", this.slugTimer);
+            if (false !== this.slugTimer) {
+                clearTimeout(this.slugTimer);
+                this.slugTimer = setTimeout(function () {
+                    _this2.checkSlug();
+                }, 2000);
+            }
             return val;
         },
         postId: function postId(val, old) {
@@ -2232,7 +2251,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     },
     methods: {
         checkSlug: function checkSlug() {
-            var _this2 = this;
+            var _this3 = this;
 
             this.slugChanged = true;
 
@@ -2248,29 +2267,29 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             }).then(function (response) {
                 var data = response.data;
                 if (data.ok) {
-                    _this2.slugOk = true;
+                    _this3.slugOk = true;
                 } else {
-                    _this2.slugOk = false;
-                    _this2.slugDupe = data;
+                    _this3.slugOk = false;
+                    _this3.slugDupe = data;
                 }
-                _this2.slugIsChecking = false;
-                _this2.slugChanged = true;
+                _this3.slugIsChecking = false;
+                _this3.slugChanged = true;
             }).catch(function (e) {
                 console.log(e);
                 alert("Error");
-                _this2.slugIsChecking = false;
-                _this2.slugChanged = true;
+                _this3.slugIsChecking = false;
+                _this3.slugChanged = true;
             });
             // this.slugOk = true;
         },
         save: function save() {
-            var _this3 = this;
+            var _this4 = this;
 
             this.saving = true;
 
             if (!this.valid) {
                 document.forms['general_post_form'].elements[Object.keys(this.validation).filter(function (x) {
-                    return !_this3.validation[x];
+                    return !_this4.validation[x];
                 })[0]].focus();
                 return;
             }
@@ -2282,31 +2301,31 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             }).then(function (response) {
                 var data = response.data;
                 if (data.ok) {
-                    _this3.$parent.openModal({
+                    _this4.$parent.openModal({
                         type: 'success',
                         title: 'Success',
-                        body: _this3.post.id ? 'Main Post Data has Successfully been Updated!' : 'New Post has Successfully been Created!'
+                        body: _this4.post.id ? 'Main Post Data has Successfully been Updated!' : 'New Post has Successfully been Created!'
                     });
 
-                    if (!_this3.post.id) {
+                    if (!_this4.post.id) {
                         window.history.replaceState({}, '', "/admin/blog/edit-post/" + data.post.id);
-                        $("#title_part").html("#" + data.post.id + " [" + data.post.slug + "]");
                         $("#bc_part").html("Edit Post #" + data.post.id);
                     }
-                    _this3.post = data.post;
+                    $("#title_part").html("#" + data.post.id + " [" + data.post.slug + "]");
+                    _this4.post = data.post;
                 } else {
-                    _this3.$parent.openModal({
+                    _this4.$parent.openModal({
                         type: 'danger',
                         title: 'Error',
                         body: "Error Occurred During Saving Data. Try again later."
                     });
                 }
                 // console.log(response.data);
-                _this3.isSaving = false;
+                _this4.isSaving = false;
             }).catch(function (err) {
                 console.log(err);
-                _this3.isSaving = false;
-                _this3.$parent.openModal({
+                _this4.isSaving = false;
+                _this4.$parent.openModal({
                     type: 'danger',
                     title: 'Error',
                     body: "Error Occurred During Saving Data. Try again later."
@@ -2563,7 +2582,7 @@ exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\
 /***/ (function(module, exports, __webpack_require__) {
 
 exports = module.exports = __webpack_require__(7)();
-exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", ""]);
+exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", ""]);
 
 /***/ }),
 /* 42 */
