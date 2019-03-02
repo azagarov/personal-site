@@ -89,7 +89,7 @@ class BlogPost extends Model implements BlogPostContract
     public function GetUrl(array $environment = []) {
 	    $environment = $this->_prepareEnvironment($environment);
 
-	    switch($environment->section) {
+	    switch($environment['section']) {
 		    default: // common
 				return url("/blog/post/{$this->slug}");
 		    	break;

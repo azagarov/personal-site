@@ -47,6 +47,8 @@
         </div>
     @endif
 
+    <div class="row">
+        <div class="col-xs-9">
     <EditPostGeneral inline-template v-cloak ref="main"
          _id="{{ $post->id }}"
     >
@@ -149,6 +151,19 @@
         </form>
     </div>
     </EditPostGeneral>
+        </div>
+        <div class="col-xs-3">
+    <EditPostDashboard inline-template v-cloak ref="dashboard">
+            <div class="box box-primary">
+                <div class="box-header with-border">
+                    <h3 class="box-title">Post dashboard</h3>
+                </div>
+                <div class="box-body">
+                </div>
+            </div>
+    </EditPostDashboard>
+        </div>
+    </div>
 
     @php
         $languagesList = [
