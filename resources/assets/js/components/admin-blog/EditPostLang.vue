@@ -12,7 +12,10 @@ export default {
 
         axios.get('/admin/blog/post/'+this._id+'/lang/'+this.locale).then(response => {
             this.content = response.data;
-            CKEDITOR.replace('html_content_'+this.locale);
+            const editor = CKEDITOR.replace('html_content_'+this.locale)
+            editor.on('change', ev => {
+                this.content.html_content = editor.getData();
+            });
         }).catch(e => {
            console.log(e);
            alert('Error Loading Data');

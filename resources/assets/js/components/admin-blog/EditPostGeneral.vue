@@ -12,6 +12,8 @@ export default {
 
         $('#date_occurred').datepicker({
             autoclose: true
+        }).on('changeDate clearDate', ev => {
+            this.post.date_occurred = $(ev.target).val();
         });
 
         this.slugTimer = false;

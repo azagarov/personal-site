@@ -10,10 +10,10 @@ use Illuminate\Http\Request;
 class AdminBlogController extends Controller
 {
     public function PostsList(Request $request) {
-    	$list = BlogPost::where('status', '<>', BlogPost::STATUS_DELETED)->get();
+//    	$list = BlogPost::where('status', '<>', BlogPost::STATUS_DELETED)->get();
 
     	return view('admin.blog.posts')->with([
-    		'list' => $list,
+//    		'list' => $list,
 		    'selectedMenuItem' => 'blog-posts-list',
 	    ]);
     }
@@ -210,6 +210,13 @@ class AdminBlogController extends Controller
     	return response()->json(BlogPost::find($id)->content($locale));
     }
 
+
+	private $_langNames = ['en' => 'English', 'es' => 'Spanish', 'ru' => 'Russian', ];
+
+
+
+    // ****************** Deprecated *************************
+
     public function PostLangSaveAjax($id, $locale, Request $request) {
     	if(!$request->postId) return abort(500);
     	if(!$request->get('locale')) return abort(500);
@@ -313,6 +320,5 @@ class AdminBlogController extends Controller
 	    return redirect('/admin/blog/edit-post/'.$post->id)->with(["status" => "{$this->_langNames[$locale]} Post Data Updated", 'selectedLocale' => $locale]);
     }
 
-    private $_langNames = ['en' => 'English', 'es' => 'Spanish', 'ru' => 'Russian', ];
 
 }

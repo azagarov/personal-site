@@ -31,6 +31,15 @@
 @push('styles')
     <link rel="stylesheet" href="/bower_components/AdminLTE/plugins/datepicker/datepicker3.css">
 <link rel="stylesheet" href="/bower_components/AdminLTE/plugins/select2/select2.min.css">
+    <style>
+        .fade-enter-active, .fade-leave-active {
+            transition: opacity .9s;
+        }
+        .fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+            opacity: 0;
+        }
+    </style>
+
 @endpush
 
 @section('content')
@@ -180,7 +189,8 @@
         $languagesList[$selectedLocale]['active'] = ' active';
     @endphp
 
-    {{--@if($post->id)--}}
+
+    <transition name="fade">
     <div class="nav-tabs-custom" v-if="hasPostId && postId">
         <ul class="nav nav-tabs">
             <li class="pull-left header"><i class="fa fa-language"></i> Languages &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</li>
@@ -196,7 +206,7 @@
         </div>
         <!-- /.tab-content -->
     </div>
-    {{--@endif--}}
+
     <!-- nav-tabs-custom -->
 
     <div class="modal fade" :class="'modal-' + modal.type" id="post-modal">
