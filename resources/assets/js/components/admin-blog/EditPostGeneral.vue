@@ -33,9 +33,7 @@ export default {
                 });
                 this.post = _post;
 
-                if(hasDraft) {
-                    this.$parent.$refs.dashboard.unsaved.main = true;
-                }
+                this.$parent.$refs.dashboard.unsaved.main = hasDraft;
 
                 this.$parent.hasPostId = true;
                 $('#date_occurred').datepicker('update', this.post.date_occurred);

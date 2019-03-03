@@ -31,9 +31,9 @@ export default {
                 hasDraft = true;
             });
 
-            if(hasDraft) {
-                this.$parent.$refs.dashboard.unsaved.main = true;
-            }
+            // if(hasDraft) {
+            //     this.$parent.$refs.dashboard.unsaved.main = true;
+            // }
 
             this.content = _content;
 
