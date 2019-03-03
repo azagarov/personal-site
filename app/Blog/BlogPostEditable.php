@@ -9,8 +9,12 @@
 namespace Blog;
 
 use Blog\Contracts\BlogPostEditable as BlogPostContract;
+use Blog\Contracts\CanHaveDraft;
+use Blog\Traits\HasDraft;
 
-class BlogPostEditable extends BlogPost implements BlogPostContract {
+class BlogPostEditable extends BlogPost implements BlogPostContract, CanHaveDraft {
+	use HasDraft;
+
 	protected $table = "blog_posts";
 
 	public function prepareJson( array $params = [] ) {

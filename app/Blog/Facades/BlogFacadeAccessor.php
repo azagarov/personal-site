@@ -25,6 +25,8 @@ class BlogFacadeAccessor {
 			Route::get('post/{id}', 'AdminBlogController@PostGetAjax');
 			Route::post('post/{id?}', 'AdminBlogController@PostSaveAjax');
 
+			Route::post('post/{id}/draft/{field}', 'AdminBlogController@SavePostFieldDraft');
+
 			Route::get('post/{id}/lang/{locale}', 'AdminBlogController@PostLangGetAjax');
 			Route::post('post/{id}/lang/{locale}', 'AdminBlogController@PostLangSaveAjax');
 

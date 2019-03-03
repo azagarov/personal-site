@@ -2240,7 +2240,23 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
         if (this._id) {
             axios.get("/admin/blog/post/" + this._id).then(function (response) {
-                _this.post = response.data;
+                var _post = response.data.post;
+                var hasDraft = false;
+                Object.keys(response.data.draft).forEach(function (x) {
+                    switch (x) {
+                        case 'categories':
+                            response.data.draft[x] = JSON.parse(response.data.draft[x]);
+                            break;
+                    }
+                    _post[x] = response.data.draft[x];
+                    hasDraft = true;
+                });
+                _this.post = _post;
+
+                if (hasDraft) {
+                    _this.$parent.$refs.dashboard.unsaved.main = true;
+                }
+
                 _this.$parent.hasPostId = true;
                 $('#date_occurred').datepicker('update', _this.post.date_occurred);
                 $(".select2.categories").val(_this.post.categories).trigger('change');
@@ -2276,7 +2292,10 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             slugIsChecking: false,
             slugDupe: {},
 
-            slugTimer: null
+            slugTimer: null,
+
+            draftTimers: {},
+            draftSavings: {}
         };
     },
 
@@ -2357,9 +2376,34 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             deep: true
         },
 
+        'post.main_order': {
+            handler: function handler(_new, _old) {
+                this.handleDataUpdate('main_order', _new);
+            }
+        },
         'post.place_coordinates': {
-            handler: function handler(x, y) {
-                // console.log(x, y);
+            handler: function handler(_new, _old) {
+                this.handleDataUpdate('place_coordinates', _new);
+            }
+        },
+        'post.keywords': {
+            handler: function handler(_new, _old) {
+                this.handleDataUpdate('keywords', _new);
+            }
+        },
+        'post.date_occurred': {
+            handler: function handler(_new, _old) {
+                this.handleDataUpdate('date_occurred', _new);
+            }
+        },
+        'post.slug': {
+            handler: function handler(_new, _old) {
+                this.handleDataUpdate('slug', _new);
+            }
+        },
+        'post.categories': {
+            handler: function handler(_new, _old) {
+                this.handleDataUpdate('categories', JSON.stringify(_new));
             }
         }
     },
@@ -2441,7 +2485,28 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             });
         },
         handleDataUpdate: function handleDataUpdate(field, value) {
-            console.log(field, value);
+            var _this5 = this;
+
+            if (!this.postId) return;
+
+            clearTimeout(this.draftTimers[field]);
+            if (true === this.draftSavings[field]) return;
+            if (!this.slugTimer) return;
+
+            this.draftTimers[field] = setTimeout(function () {
+
+                _this5.draftSavings[field] = true;
+
+                axios.post('/admin/blog/post/' + _this5.postId + '/draft/' + field, {
+                    value: value
+                }).then(function (response) {
+                    _this5.draftSavings[field] = false;
+                    console.log(response.data);
+                }).catch(function (e) {
+                    _this5.draftSavings[field] = false;
+                    console.log(e);
+                });
+            }, 2000);
         }
     }
 });
@@ -2723,7 +2788,7 @@ exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\
 /***/ (function(module, exports, __webpack_require__) {
 
 exports = module.exports = __webpack_require__(7)();
-exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", ""]);
+exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", ""]);
 
 /***/ }),
 /* 44 */

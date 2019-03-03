@@ -20,7 +20,23 @@ export default {
 
         if(this._id) {
             axios.get("/admin/blog/post/" + this._id).then(response => {
-                this.post = response.data;
+                const _post = response.data.post;
+                let hasDraft = false;
+                Object.keys(response.data.draft).forEach(x => {
+                    switch(x) {
+                        case 'categories':
+                            response.data.draft[x] = JSON.parse(response.data.draft[x]);
+                            break;
+                    }
+                    _post[x] = response.data.draft[x];
+                    hasDraft = true;
+                });
+                this.post = _post;
+
+                if(hasDraft) {
+                    this.$parent.$refs.dashboard.unsaved.main = true;
+                }
+
                 this.$parent.hasPostId = true;
                 $('#date_occurred').datepicker('update', this.post.date_occurred);
                 $(".select2.categories").val(this.post.categories).trigger('change');
@@ -58,6 +74,9 @@ export default {
             slugDupe: {},
 
             slugTimer: null,
+
+            draftTimers: {},
+            draftSavings: {},
         }
     },
 
@@ -132,11 +151,36 @@ export default {
             deep: true
         },
 
-        'post.place_coordinates' : {
-            handler(x, y) {
-                // console.log(x, y);
+        'post.main_order' : {
+            handler(_new, _old) {
+                this.handleDataUpdate('main_order', _new);
             }
-        }
+        },
+        'post.place_coordinates' : {
+            handler(_new, _old) {
+                this.handleDataUpdate('place_coordinates', _new);
+            }
+        },
+        'post.keywords' : {
+            handler(_new, _old) {
+                this.handleDataUpdate('keywords', _new);
+            }
+        },
+        'post.date_occurred' : {
+            handler(_new, _old) {
+                this.handleDataUpdate('date_occurred', _new);
+            }
+        },
+        'post.slug' : {
+            handler(_new, _old) {
+                this.handleDataUpdate('slug', _new);
+            }
+        },
+        'post.categories' : {
+            handler(_new, _old) {
+                this.handleDataUpdate('categories', JSON.stringify(_new));
+            }
+        },
     },
     methods: {
         checkSlug() {
@@ -212,7 +256,26 @@ export default {
         },
 
         handleDataUpdate(field, value) {
-            console.log(field, value);
+            if(!this.postId) return;
+
+            clearTimeout(this.draftTimers[field]);
+            if(true === this.draftSavings[field]) return;
+            if(!this.slugTimer) return;
+
+            this.draftTimers[field] = setTimeout(() => {
+
+                this.draftSavings[field] = true;
+
+                axios.post('/admin/blog/post/'+this.postId+'/draft/'+field, {
+                    value: value
+                }).then(response => {
+                    this.draftSavings[field] = false;
+                    console.log(response.data);
+                }).catch(e => {
+                    this.draftSavings[field] = false;
+                    console.log(e);
+                });
+            }, 2000);
         }
     }
 }

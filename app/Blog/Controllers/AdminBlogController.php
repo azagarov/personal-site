@@ -6,6 +6,7 @@ use Blog\BlogCategory;
 use Blog\BlogPost;
 use Blog\BlogPostEditable;
 use Blog\Contracts\BlogEditableService;
+use Blog\Contracts\CanHaveDraft;
 use Blog\Facades\Blog;
 use Illuminate\Http\Request;
 use \App\Http\Controllers\Controller;
@@ -67,16 +68,15 @@ class AdminBlogController extends Controller
     }
 
     public function PostGetAjax($id, Request $request) {
-	    return response()->json($this->blog->GetPost($id)->prepareJson());
-    }
-
-    private function _getPostJsonObj(BlogPost $post) {
-	    $response = $post->toArray();
-	    $response['categories'] = $post->categories->map(function($x) {return $x->id;});
-	    if($ts = strtotime($response['date_occurred'])) {
-		    $response['date_occurred'] = date('m/d/Y', $ts);
+    	$post = $this->blog->GetPost($id);
+    	$draft = [];
+    	if($post instanceof CanHaveDraft && $post->canHaveDraft()) {
+    		$draft = $post->getDraft()->getAll();
 	    }
-	    return $response;
+	    return response()->json([
+	    	'post' => $post->prepareJson(),
+		    'draft' => $draft,
+	    ]);
     }
 
     public function EditPost($postId, Request $request) {
@@ -143,6 +143,10 @@ class AdminBlogController extends Controller
 	    $post = $this->blog->GetPost($p->id);
 	    $ok = $post->updateWith($p);
 
+	    if($post instanceof CanHaveDraft) {
+	    	$post->getDraft()->clearAll();
+	    }
+
     	return response()->json(['ok' => $ok, 'post' => $post->prepareJson(), ]);
     }
 
@@ -173,6 +177,19 @@ class AdminBlogController extends Controller
 	 * @var BlogEditableService
 	 */
 	private $blog;
+
+	// ******************* Draft *****************************
+
+	public function SavePostFieldDraft($id, $field, Request $request) {
+		$post = $this->blog->GetPost($id);
+		if(!$post) return abort(404);
+
+		if($post instanceof CanHaveDraft) {
+			$post->getDraft()->setField($field, $request->value);
+		}
+
+		return response()->json(['ok' => true, 'field' => $field,]);
+	}
 
     // ****************** Deprecated *************************
 
