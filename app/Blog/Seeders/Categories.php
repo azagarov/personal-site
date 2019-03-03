@@ -1,11 +1,13 @@
 <?php
 
+namespace Blog\Seeders;
+
 use Illuminate\Database\Seeder;
 
 use Blog\BlogCategory;
 use Blog\BlogCategoryContent;
 
-class BlogCategoriesSeeder extends Seeder
+class Categories extends Seeder
 {
     /**
      * Run the database seeds.
