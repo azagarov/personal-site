@@ -156,6 +156,9 @@
             </div>
             <!-- /.box-body -->
         </form>
+        <div class="overlay" v-if="!slugTimer">
+            <i class="fa fa-refresh fa-spin"></i>
+        </div>
     </div>
     </EditPostGeneral>
         </div>
@@ -188,7 +191,11 @@
                         <span v-else>Save General Post Information</span>
                     </button>
                 </div>
+                <div class="overlay" v-if="!$parent.$refs.main.slugTimer">
+                    <i class="fa fa-refresh fa-spin"></i>
+                </div>
             </div>
+
     </EditPostDashboard>
         </div>
     </div>

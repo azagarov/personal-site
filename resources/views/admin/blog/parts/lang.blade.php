@@ -3,7 +3,7 @@
   locale="{{$lang['locale']}}"
   lname="{{$lang['name']}}"
 >
-<div class="tab-pane{{ $lang['active'] }}" id="tab_lang_{{ $lang['locale'] }}">
+<div class="tab-pane{{ $lang['active'] }} overlay-wrapper" id="tab_lang_{{ $lang['locale'] }}" style="position:relative;">
     <form role="form" name="form_lang_{{$lang['locale']}}" target="_self" method="post" action="/admin/blog/save-post/{{ $post->id }}/{{ $lang['locale'] }}">
         {{ csrf_field() }}
 
@@ -43,5 +43,8 @@
             </button>
         </div>
     </form>
+    <div class="overlay" v-if="!timersAreActive">
+        <i class="fa fa-refresh fa-spin"></i>
+    </div>
 </div>
 </EditPostLang>
