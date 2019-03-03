@@ -2624,7 +2624,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         handleDataUpdate: function handleDataUpdate(field, value) {
             var _this3 = this;
 
-            // console.log("ever???");
+            // console.log("ever???", this._id, this.draftSavings[field], this.timersAreActive);
             if (!this._id) return;
 
             clearTimeout(this.draftTimers[field]);

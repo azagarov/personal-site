@@ -45,6 +45,7 @@ class Draft implements DraftContract {
 	}
 
 	public function setField( $field, $value ) {
+		$value = $value ?? "";
 		if(isset($this->_cache[$field])) {
 			DB::table('drafts')
 			  ->where('entity', $this->hash)

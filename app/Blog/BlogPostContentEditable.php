@@ -35,6 +35,7 @@ class BlogPostContentEditable extends BlogPostContent implements  CanHaveDraft {
 
 	public function __construct( array $attributes = [] ) {
 		parent::__construct( $attributes );
+		$this->html_content = "";
 	}
 
 }

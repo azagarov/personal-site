@@ -99,7 +99,7 @@ export default {
             });
         },
         handleDataUpdate(field, value) {
-// console.log("ever???");
+// console.log("ever???", this._id, this.draftSavings[field], this.timersAreActive);
             if(!this._id) return;
 
             clearTimeout(this.draftTimers[field]);
