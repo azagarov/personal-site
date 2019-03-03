@@ -13,7 +13,7 @@
         </div>
         <div class="extra-controls">
             <div class="row">
-                <div class="col-xs-2 col-xs-offset-10">
+                <div class="col-lg-2 col-lg-offset-10 col-xs-5 col-xs-offset-7">
                     <div class="lang-selector">
                         <div class="btn-group btn-group-sm">
                             <div class="btn" :class="l == locale ? 'bg-olive' : 'bg-purple'" v-for="l in locales" @click="locale = l">{{l}}</div>
@@ -26,11 +26,10 @@
     </div>
     <!-- /.box-header -->
     <div class="box-body">
-
         <ul class="products-list product-list-in-box">
             <li class="item" v-for="post in posts">
                 <div class="row">
-                    <div class="col-xs-5">
+                    <div class="col-lg-5 col-xs-10">
                         <a :href="'/admin/blog/edit-post/' + post.id" class="product-title">
                             <transition name="fade" mode="out-in">
                             <div class="post-title" v-for="l in locales" v-if="l == locale" :key="l">
@@ -46,7 +45,14 @@
                         </span>
 
                     </div>
-                    <div class="col-xs-4">
+
+                    <div class="col-xs-2 col-lg-1 col-lg-push-6 text-right">
+                        <a class='edit-post' :href="'/admin/blog/edit-post/' + post.id">
+                            <i class="fa fa-edit"></i>
+                        </a>
+                    </div>
+
+                    <div class="col-lg-4 col-lg-pull-1 col-xs-7">
                         <transition name="fade" mode="out-in">
                         <div class="post-categories" v-for="l in locales" v-if="l == locale" :key="l">
                             <span class="cat-wrapper" v-for="c in post[l].categories">
@@ -56,7 +62,8 @@
                         </transition>
 
                     </div>
-                    <div class="col-xs-2">
+
+                    <div class="col-lg-2 col-lg-pull-1 col-xs-5">
                         <div class="post-status">
                             <span v-if="post.status == 'public'" class="label label-success">Public</span>
                             <span v-else-if="post.status == 'private'" class="label label-warning">Private</span>
@@ -68,11 +75,6 @@
                                 <span  class="badge" :class="'bg-' + post[l].color">{{ l }}</span>
                             </span>
                         </div>
-                    </div>
-                    <div class="col-xs-1">
-                        <a class='edit-post' :href="'/admin/blog/edit-post/' + post.id">
-                            <i class="fa fa-edit"></i>
-                        </a>
                     </div>
                 </div>
                 <!--<div class="product-info">-->
@@ -120,6 +122,11 @@ export default {
 
 <style scoped lang="scss">
 .post-categories {
+    padding: 5px;
+    margin: 2px;
+    background-color: #ebf1c3;
+    min-height: 42px;
+
     .cat-wrapper:before {
         content: ', ';
     }
@@ -160,6 +167,7 @@ a.edit-post {
 }
 
 .products-list {
+    /*padding-left: 15px;*/
     .item:hover {
         background-color: #f9f9ff;
 

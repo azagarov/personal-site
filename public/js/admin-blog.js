@@ -2636,6 +2636,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -2701,7 +2703,7 @@ exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\
 /***/ (function(module, exports, __webpack_require__) {
 
 exports = module.exports = __webpack_require__(7)();
-exports.push([module.i, "\n.post-categories .cat-wrapper[data-v-bed5a66a]:before {\n  content: ', ';\n}\n.post-categories .cat-wrapper[data-v-bed5a66a]:first-of-type:before {\n  content: '';\n}\n.post-langs[data-v-bed5a66a] {\n  text-align: center;\n}\n.post-langs .lang-wrapper[data-v-bed5a66a]:before {\n    content: ' ';\n}\n.post-langs .lang-wrapper[data-v-bed5a66a]:first-of-type:before {\n    content: '';\n}\n.post-status[data-v-bed5a66a] {\n  border-bottom: dotted 1px #999;\n  padding: 0 10px 5px;\n  text-align: center;\n}\na.edit-post[data-v-bed5a66a] {\n  font-size: 1.5em;\n}\n.extra-controls[data-v-bed5a66a] {\n  margin-top: 16px;\n  padding: 8px 0;\n  border-top: solid 1px #ddd;\n  border-bottom: solid 1px #ddd;\n}\n.extra-controls .lang-selector[data-v-bed5a66a] {\n    text-align: right;\n}\n.products-list .item[data-v-bed5a66a]:hover {\n  background-color: #f9f9ff;\n}\n", ""]);
+exports.push([module.i, "\n.post-categories[data-v-bed5a66a] {\n  padding: 5px;\n  margin: 2px;\n  background-color: #ebf1c3;\n  min-height: 42px;\n}\n.post-categories .cat-wrapper[data-v-bed5a66a]:before {\n    content: ', ';\n}\n.post-categories .cat-wrapper[data-v-bed5a66a]:first-of-type:before {\n    content: '';\n}\n.post-langs[data-v-bed5a66a] {\n  text-align: center;\n}\n.post-langs .lang-wrapper[data-v-bed5a66a]:before {\n    content: ' ';\n}\n.post-langs .lang-wrapper[data-v-bed5a66a]:first-of-type:before {\n    content: '';\n}\n.post-status[data-v-bed5a66a] {\n  border-bottom: dotted 1px #999;\n  padding: 0 10px 5px;\n  text-align: center;\n}\na.edit-post[data-v-bed5a66a] {\n  font-size: 1.5em;\n}\n.extra-controls[data-v-bed5a66a] {\n  margin-top: 16px;\n  padding: 8px 0;\n  border-top: solid 1px #ddd;\n  border-bottom: solid 1px #ddd;\n}\n.extra-controls .lang-selector[data-v-bed5a66a] {\n    text-align: right;\n}\n.products-list[data-v-bed5a66a] {\n  /*padding-left: 15px;*/\n}\n.products-list .item[data-v-bed5a66a]:hover {\n    background-color: #f9f9ff;\n}\n", ""]);
 
 /***/ }),
 /* 45 */
@@ -3142,7 +3144,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
   }, [_c('div', {
     staticClass: "row"
   }, [_c('div', {
-    staticClass: "col-xs-2 col-xs-offset-10"
+    staticClass: "col-lg-2 col-lg-offset-10 col-xs-5 col-xs-offset-7"
   }, [_c('div', {
     staticClass: "lang-selector"
   }, [_c('div', {
@@ -3167,7 +3169,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     }, [_c('div', {
       staticClass: "row"
     }, [_c('div', {
-      staticClass: "col-xs-5"
+      staticClass: "col-lg-5 col-xs-10"
     }, [_c('a', {
       staticClass: "product-title",
       attrs: {
@@ -3186,7 +3188,16 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     }), 0)], 1), _vm._v(" "), _c('span', {
       staticClass: "product-description"
     }, [_vm._v("\n                            #" + _vm._s(post.id) + "    /" + _vm._s(post.slug) + "/\n                        ")])]), _vm._v(" "), _c('div', {
-      staticClass: "col-xs-4"
+      staticClass: "col-xs-2 col-lg-1 col-lg-push-6 text-right"
+    }, [_c('a', {
+      staticClass: "edit-post",
+      attrs: {
+        "href": '/admin/blog/edit-post/' + post.id
+      }
+    }, [_c('i', {
+      staticClass: "fa fa-edit"
+    })])]), _vm._v(" "), _c('div', {
+      staticClass: "col-lg-4 col-lg-pull-1 col-xs-7"
     }, [_c('transition', {
       attrs: {
         "name": "fade",
@@ -3204,7 +3215,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
         }, [_vm._v(_vm._s(c))])])
       }), 0) : _vm._e()
     }), 0)], 1), _vm._v(" "), _c('div', {
-      staticClass: "col-xs-2"
+      staticClass: "col-lg-2 col-lg-pull-1 col-xs-5"
     }, [_c('div', {
       staticClass: "post-status"
     }, [(post.status == 'public') ? _c('span', {
@@ -3224,16 +3235,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
         staticClass: "badge",
         class: 'bg-' + post[l].color
       }, [_vm._v(_vm._s(l))])])
-    }), 0)]), _vm._v(" "), _c('div', {
-      staticClass: "col-xs-1"
-    }, [_c('a', {
-      staticClass: "edit-post",
-      attrs: {
-        "href": '/admin/blog/edit-post/' + post.id
-      }
-    }, [_c('i', {
-      staticClass: "fa fa-edit"
-    })])])])])
+    }), 0)])])])
   }), 0)]), _vm._v(" "), (_vm.loading) ? _c('div', {
     staticClass: "overlay"
   }, [_c('i', {
