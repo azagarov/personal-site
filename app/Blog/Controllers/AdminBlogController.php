@@ -96,7 +96,6 @@ class AdminBlogController extends Controller
 	    } else {
 		    $post = BlogPost::find($postId);
 	    }
-
 //var_dump(json_encode($post));
     	return view('admin.blog.edit-post')->with([
     		'post' => $post,
