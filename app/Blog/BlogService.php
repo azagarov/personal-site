@@ -6,10 +6,10 @@
  * Time: 08:36
  */
 
-namespace App\Services;
+namespace Blog;
 
-use App\Contracts\Blog;
-use App\BlogPost;
+use Blog\Contracts\Blog;
+//use Blog\BlogPost;
 
 class BlogService implements Blog {
 

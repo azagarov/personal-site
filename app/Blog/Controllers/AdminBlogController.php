@@ -1,19 +1,18 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace Blog\Controllers;
 
-use App\BlogCategory;
-use App\BlogPost;
-use App\Contracts\Blog;
+use Blog\BlogCategory;
+use Blog\BlogPost;
+use Blog\Contracts\Blog;
 use Illuminate\Http\Request;
+use \App\Http\Controllers\Controller;
 
 class AdminBlogController extends Controller
 {
     public function PostsList(Request $request) {
-//    	$list = BlogPost::where('status', '<>', BlogPost::STATUS_DELETED)->get();
 
     	return view('admin.blog.posts')->with([
-//    		'list' => $list,
 		    'selectedMenuItem' => 'blog-posts-list',
 	    ]);
     }

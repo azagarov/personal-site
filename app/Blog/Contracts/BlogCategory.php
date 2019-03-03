@@ -6,7 +6,7 @@
  * Time: 10:11
  */
 
-namespace App\Contracts;
+namespace Blog\Contracts;
 
 interface BlogCategory {
 

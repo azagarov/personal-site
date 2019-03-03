@@ -23,9 +23,10 @@ $router->group(['middleware' => ['check.locale']], function($router) {
 	Route::get('/living/', 'HomePageController@Show');
 	Route::get('/traveling/', 'HomePageController@Show');
 
-	Route::get('/blog/', 'HomePageController@Show');
-
-	Route::get('/blog/post/{slug}', 'BlogController@ShowSinglePost');
+	Route::namespace('\Blog\Controllers')->prefix('blog')->group(function() {
+		Route::get('/', 'BlogController@main');
+		Route::get('post/{slug}', 'BlogController@ShowSinglePost');
+	});
 
 
 	// ******************************************************************************
@@ -36,33 +37,39 @@ $router->group(['middleware' => ['check.locale']], function($router) {
 
 		$router->group(['middleware' => ['admin']], function($router) {
 
-			Route::get('/admin/dashboard', 'AdminDashboardController@show');
+			Route::prefix('admin')->group(function() {
+				Route::redirect('/', '/dashboard');
+				Route::get('dashboard', 'AdminDashboardController@show');
 
-			Route::get('/admin/profile', 'AdminProfileController@show');
+				Route::get('profile', 'AdminProfileController@show');
 
-			Route::get('/admin/tasks', 'AdminTasksController@TasksList');
-			Route::get('/admin/tasks/edit/{taskId}', 'AdminTasksController@EditTask');
-			Route::post('/admin/tasks/save/{postId}', 'AdminTasksController@SaveTask');
+				Route::get('tasks', 'AdminTasksController@TasksList');
+				Route::get('tasks/edit/{taskId}', 'AdminTasksController@EditTask');
+				Route::post('tasks/save/{postId}', 'AdminTasksController@SaveTask');
+			});
 
 			// *************************** Blog Administration ********************************
 
-			Route::get('/admin/blog/posts', 'AdminBlogController@PostsList');
-			Route::post('/admin/blog/posts', 'AdminBlogController@PostsListAjax');
+			Route::namespace("\Blog\Controllers")->prefix('admin/blog')->group(function() {
+				Route::get('posts', 'AdminBlogController@PostsList');
+				Route::post('posts', 'AdminBlogController@PostsListAjax');
 
-			Route::get('/admin/blog/post/{id}', 'AdminBlogController@PostGetAjax');
-			Route::post('/admin/blog/post/{id?}', 'AdminBlogController@PostSaveAjax');
+				Route::get('post/{id}', 'AdminBlogController@PostGetAjax');
+				Route::post('post/{id?}', 'AdminBlogController@PostSaveAjax');
 
-			Route::get('/admin/blog/post/{id}/lang/{locale}', 'AdminBlogController@PostLangGetAjax');
-			Route::post('/admin/blog/post/{id}/lang/{locale}', 'AdminBlogController@PostLangSaveAjax');
+				Route::get('post/{id}/lang/{locale}', 'AdminBlogController@PostLangGetAjax');
+				Route::post('post/{id}/lang/{locale}', 'AdminBlogController@PostLangSaveAjax');
 
 
-			Route::post('/admin/blog/test_slug', 'AdminBlogController@CheckSlugAjax');
+				Route::post('test_slug', 'AdminBlogController@CheckSlugAjax');
 
-			Route::get('/admin/blog/edit-post/{postId}', 'AdminBlogController@EditPost');
+				Route::get('edit-post/{postId}', 'AdminBlogController@EditPost');
 
-			Route::post('/admin/blog/save-post/{postId}', 'AdminBlogController@SavePost');
-			Route::post('/admin/blog/save-post/{postId}/{locale}', 'AdminBlogController@SavePostContent');
+				// ******* Deprecated **********
 
+				Route::post('save-post/{postId}', 'AdminBlogController@SavePost');
+				Route::post('save-post/{postId}/{locale}', 'AdminBlogController@SavePostContent');
+			});
 		});
 	});
 });
@@ -70,11 +77,7 @@ $router->group(['middleware' => ['check.locale']], function($router) {
 
 
 
-Route::get('/switchLanguage/{locale}', function($locale) {
-	\Request::Session()->put('__currentLocale', $locale);
-
-	return \Redirect::back();
-});
+Route::get('/switchLanguage/{locale}', "MiscController@switchLocale");
 
 
 Route::post('/contacts/send_message', 'MiscController@SendMessage');

@@ -7,6 +7,11 @@ use Illuminate\Http\Request;
 
 class MiscController extends Controller
 {
+	public function SwitchLocale($locale) {
+		session(['__currentLocale' => $locale]);
+		return redirect()->back();
+	}
+
     public function SendMessage(Request $request) {
 
     	$message = new ContactsMessage();

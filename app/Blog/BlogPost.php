@@ -1,9 +1,9 @@
 <?php
 
-namespace App;
+namespace Blog;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Contracts\BlogPost as BlogPostContract;
+use Blog\Contracts\BlogPost as BlogPostContract;
 
 class BlogPost extends Model implements BlogPostContract
 {
@@ -12,7 +12,7 @@ class BlogPost extends Model implements BlogPostContract
 	const STATUS_DELETED = 'deleted';
 
     public function localeContents() {
-    	return $this->hasMany('App\BlogPostContent', 'post_id');
+    	return $this->hasMany('Blog\BlogPostContent', 'post_id');
     }
 
     public function __get( $key ) {
@@ -74,7 +74,7 @@ class BlogPost extends Model implements BlogPostContract
 
 
     public function categories() {
-    	return $this->belongsToMany('App\BlogCategory', 'blog_post_category', 'post_id', 'category_id');
+    	return $this->belongsToMany('Blog\BlogCategory', 'blog_post_category', 'post_id', 'category_id');
     }
 
 
@@ -87,7 +87,7 @@ class BlogPost extends Model implements BlogPostContract
     }
 
     public function GetUrl(array $environment = []) {
-	    $environment = $this->_prepareEnvironment($environment);
+	    $environment = $this->_prepareUrlEnvironment($environment);
 
 	    switch($environment['section']) {
 		    default: // common
@@ -96,11 +96,19 @@ class BlogPost extends Model implements BlogPostContract
 	    }
     }
 
-    private function _prepareEnvironment(array $environment = []) {
+    private function _prepareUrlEnvironment(array $environment = []) {
     	if(!isset($environment['section'])) {
     		$environment['section'] = 'common';
 	    }
 
 	    return $environment;
+    }
+
+    public function recordView( array $environment = [] ) {
+	    // TODO: Implement recordView() method.
+    }
+
+    public function recordShare( array $environment = [] ) {
+	    // TODO: Implement recordShare() method.
     }
 }

@@ -173,50 +173,42 @@ export default {
         save() {
             this.saving = true;
 
-            if(!this.valid) {
-                document.forms['general_post_form'].elements[Object.keys(this.validation).filter(x => !this.validation[x])[0]].focus();
-                return;
-            }
-
-            this.isSaving = true;
-
-            axios.post('/admin/blog/post/'+this.postId, {
-                post: this.post
-            }).then(response => {
-                const data = response.data;
-                if(data.ok) {
-                    // this.$parent.openModal({
-                    //     type: 'success',
-                    //     title: 'Success',
-                    //     body: this.post.id ? 'Main Post Data has Successfully been Updated!' : 'New Post has Successfully been Created!'
-                    // });
-
-                    if(!this.post.id) {
-                        window.history.replaceState({}, '', "/admin/blog/edit-post/" + data.post.id);
-                        $("#bc_part").html("Edit Post #" + data.post.id);
-                    }
-                    $("#title_part").html("#" + data.post.id + " [" + data.post.slug + "]");
-                    this.post = data.post;
-                    this.$parent.$refs.dashboard.unsaved.main = false;
-                    this.$parent.$refs.dashboard.hasSaved = true;
-                } else {
-                    this.$parent.openModal({
-                        type: 'danger',
-                        title: 'Error',
-                        body: "Error Occurred During Saving Data. Try again later."
-                    });
+            return new Promise((resolve, reject) => {
+                if(!this.valid) {
+                    document.forms['general_post_form'].elements[Object.keys(this.validation).filter(x => !this.validation[x])[0]].focus();
+                    return reject({code:0});
                 }
-                // console.log(response.data);
-                this.isSaving = false;
-            }).catch(err => {
-                console.log(err);
-                this.isSaving = false;
-                this.$parent.openModal({
-                    type: 'danger',
-                    title: 'Error',
-                    body: "Error Occurred During Saving Data. Try again later."
+
+                this.isSaving = true;
+
+                axios.post('/admin/blog/post/'+this.postId, {
+                    post: this.post
+                }).then(response => {
+                    const data = response.data;
+                    if(data.ok) {
+
+                        // Update Header Data that is not under Vue control
+                        if(!this.post.id) {
+                            window.history.replaceState({}, '', "/admin/blog/edit-post/" + data.post.id);
+                            $("#bc_part").html("Edit Post #" + data.post.id);
+                        }
+                        $("#title_part").html("#" + data.post.id + " [" + data.post.slug + "]");
+                        this.post = data.post;
+
+                        this.isSaving = false;
+                        return resolve(this.post);
+                    } else {
+                        this.isSaving = false;
+                        console.log(data);
+                        return reject({code:1});
+                    }
+                    // console.log(response.data);
+                }).catch(err => {
+                    this.isSaving = false;
+                    // console.log(err);
+                    return reject({code:2});
                 });
-            })
+            });
         },
 
         handleDataUpdate(field, value) {

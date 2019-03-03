@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace Blog\Controllers;
 
-use App\BlogCategory;
-use App\BlogPost;
-use App\Contracts\Blog;
+use App\Http\Controllers\Controller;
+
+use Blog\Contracts\Blog;
 use Illuminate\Http\Request;
 
 class BlogController extends Controller
@@ -12,6 +12,10 @@ class BlogController extends Controller
 
 	public function __construct(Blog $blog) {
 		$this->blog = $blog;
+	}
+
+	public function main() {
+		echo "<h1>Hola</h1>";
 	}
 
 	/**

@@ -2186,7 +2186,26 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
     methods: {
         save: function save() {
-            this.$parent.$refs.main.save();
+            var _this = this;
+
+            this.$parent.$refs.main.save().then(function (post) {
+                _this.unsaved.main = false;
+                _this.hasSaved = true;
+            }).catch(function (e) {
+                switch (e) {
+                    case 0:
+                        alert('ok');
+                        //do nothing
+                        break;
+                    default:
+                        _this.$parent.openModal({
+                            type: 'danger',
+                            title: 'Error',
+                            body: "Error Occurred During Saving Data. Try again later."
+                        });
+                        break;
+                }
+            });
         }
     }
 });
@@ -2384,50 +2403,42 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
             this.saving = true;
 
-            if (!this.valid) {
-                document.forms['general_post_form'].elements[Object.keys(this.validation).filter(function (x) {
-                    return !_this4.validation[x];
-                })[0]].focus();
-                return;
-            }
-
-            this.isSaving = true;
-
-            axios.post('/admin/blog/post/' + this.postId, {
-                post: this.post
-            }).then(function (response) {
-                var data = response.data;
-                if (data.ok) {
-                    // this.$parent.openModal({
-                    //     type: 'success',
-                    //     title: 'Success',
-                    //     body: this.post.id ? 'Main Post Data has Successfully been Updated!' : 'New Post has Successfully been Created!'
-                    // });
-
-                    if (!_this4.post.id) {
-                        window.history.replaceState({}, '', "/admin/blog/edit-post/" + data.post.id);
-                        $("#bc_part").html("Edit Post #" + data.post.id);
-                    }
-                    $("#title_part").html("#" + data.post.id + " [" + data.post.slug + "]");
-                    _this4.post = data.post;
-                    _this4.$parent.$refs.dashboard.unsaved.main = false;
-                    _this4.$parent.$refs.dashboard.hasSaved = true;
-                } else {
-                    _this4.$parent.openModal({
-                        type: 'danger',
-                        title: 'Error',
-                        body: "Error Occurred During Saving Data. Try again later."
-                    });
+            return new Promise(function (resolve, reject) {
+                if (!_this4.valid) {
+                    document.forms['general_post_form'].elements[Object.keys(_this4.validation).filter(function (x) {
+                        return !_this4.validation[x];
+                    })[0]].focus();
+                    return reject(0);
                 }
-                // console.log(response.data);
-                _this4.isSaving = false;
-            }).catch(function (err) {
-                console.log(err);
-                _this4.isSaving = false;
-                _this4.$parent.openModal({
-                    type: 'danger',
-                    title: 'Error',
-                    body: "Error Occurred During Saving Data. Try again later."
+
+                _this4.isSaving = true;
+
+                axios.post('/admin/blog/post/' + _this4.postId, {
+                    post: _this4.post
+                }).then(function (response) {
+                    var data = response.data;
+                    if (data.ok) {
+
+                        // Update Header Data that is not under Vue control
+                        if (!_this4.post.id) {
+                            window.history.replaceState({}, '', "/admin/blog/edit-post/" + data.post.id);
+                            $("#bc_part").html("Edit Post #" + data.post.id);
+                        }
+                        $("#title_part").html("#" + data.post.id + " [" + data.post.slug + "]");
+                        _this4.post = data.post;
+
+                        _this4.isSaving = false;
+                        return resolve(_this4.post);
+                    } else {
+                        _this4.isSaving = false;
+                        console.log(data);
+                        return reject(1);
+                    }
+                    // console.log(response.data);
+                }).catch(function (err) {
+                    _this4.isSaving = false;
+                    console.log(err);
+                    return reject(2);
                 });
             });
         },
@@ -2675,7 +2686,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /***/ (function(module, exports, __webpack_require__) {
 
 exports = module.exports = __webpack_require__(7)();
-exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", ""]);
+exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", ""]);
 
 /***/ }),
 /* 41 */
@@ -2696,7 +2707,7 @@ exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\
 /***/ (function(module, exports, __webpack_require__) {
 
 exports = module.exports = __webpack_require__(7)();
-exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", ""]);
+exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", ""]);
 
 /***/ }),
 /* 44 */

@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\ContactsMessage;
 use Illuminate\Http\Request;
-use App\Contracts\Blog;
+use Blog\Contracts\Blog;
 
 class DevelopmentController extends Controller
 {

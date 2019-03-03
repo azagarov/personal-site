@@ -1,10 +1,13 @@
 <?php
 
-namespace App\Providers;
+namespace Blog\Providers;
 
 use Illuminate\Support\ServiceProvider;
 
-class AppServiceProvider extends ServiceProvider
+use Blog\Contracts\Blog;
+use Blog\BlogService;
+
+class BlogServiceProvider extends ServiceProvider
 {
     /**
      * Bootstrap any application services.
@@ -24,5 +27,6 @@ class AppServiceProvider extends ServiceProvider
     public function register()
     {
         //
+	    $this->app->singleton(Blog::class, BlogService::class );
     }
 }

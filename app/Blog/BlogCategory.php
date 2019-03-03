@@ -1,10 +1,10 @@
 <?php
 
-namespace App;
+namespace Blog;
 
 use Illuminate\Database\Eloquent\Model;
 
-use App\Contracts\BlogCategory as BlogCategoryContract;
+use Blog\Contracts\BlogCategory as BlogCategoryContract;
 
 class BlogCategory extends Model implements BlogCategoryContract
 {
@@ -32,7 +32,7 @@ class BlogCategory extends Model implements BlogCategoryContract
 
 
 	public function localeContents() {
-		return $this->hasMany('App\BlogCategoryContent', 'category_id');
+		return $this->hasMany('Blog\BlogCategoryContent', 'category_id');
 	}
 
 	public function content($locale = 'en') {
@@ -49,7 +49,7 @@ class BlogCategory extends Model implements BlogCategoryContract
 	}
 
 	public function posts() {
-		return $this->belongsToMany('App\BlogPost', 'blog_post_category', 'category_id', 'post_id');
+		return $this->belongsToMany('Blog\BlogPost', 'blog_post_category', 'category_id', 'post_id');
 	}
 
 }

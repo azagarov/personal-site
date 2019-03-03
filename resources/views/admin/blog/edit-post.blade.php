@@ -169,7 +169,7 @@
                     <div class="form-group">
                         <label>Status</label>
                         <select class="form-control" name="status" v-model="status">
-                            @foreach(App\BlogPost::GetFullStatusesList() as $key => $value)
+                            @foreach(Blog\BlogPost::GetFullStatusesList() as $key => $value)
                                 <option value="{{ $key }}">{{ $value }}</option>
                                 {{--@if($key == $post->status) selected="selected" @endif--}}
                             @endforeach

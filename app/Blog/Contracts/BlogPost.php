@@ -6,7 +6,7 @@
  * Time: 10:07
  */
 
-namespace App\Contracts;
+namespace Blog\Contracts;
 
 
 interface BlogPost {
@@ -16,4 +16,8 @@ interface BlogPost {
 	 * @return string
 	 */
 	public function getUrl(array $environment = []);
+
+	public function recordView(array $environment = []);
+
+	public function recordShare(array $environment = []);
 }

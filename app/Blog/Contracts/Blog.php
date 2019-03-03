@@ -6,10 +6,7 @@
  * Time: 08:36
  */
 
-namespace App\Contracts;
-
-
-//use App\Contracts\BlogPost;
+namespace Blog\Contracts;
 
 interface Blog {
 

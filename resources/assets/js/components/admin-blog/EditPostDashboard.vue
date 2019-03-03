@@ -52,7 +52,25 @@ export default {
 
     methods: {
         save() {
-            this.$parent.$refs.main.save();
+            this.$parent.$refs.main.save().then(post => {
+                this.unsaved.main = false;
+                this.hasSaved = true;
+            }).catch(e => {
+                switch(e.code) {
+                    case 0:
+                        alert('ok');
+                        //do nothing
+                        break;
+
+                    default:
+                        this.$parent.openModal({
+                            type: 'danger',
+                            title: 'Error',
+                            body: "Error Occurred During Saving Data. Try again later."
+                        });
+                        break;
+                }
+            });
         }
     }
 }
