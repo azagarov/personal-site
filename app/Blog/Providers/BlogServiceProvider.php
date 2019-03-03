@@ -2,10 +2,14 @@
 
 namespace Blog\Providers;
 
+use App\Blog\Facades\BlogFacadeAccessor;
 use Illuminate\Support\ServiceProvider;
 
 use Blog\Contracts\BlogService as BlogContract;
 use Blog\BlogService;
+
+use Blog\Contracts\BlogEditableService as BlogEditableContract;
+use Blog\BlogEditableService;
 
 class BlogServiceProvider extends ServiceProvider
 {
@@ -28,6 +32,7 @@ class BlogServiceProvider extends ServiceProvider
     {
         //
 	    $this->app->singleton(BlogContract::class, BlogService::class );
-	    $this->app->bind('blog', BlogService::class);
+	    $this->app->singleton(BlogEditableContract::class, BlogEditableService::class );
+	    $this->app->bind('blog', BlogFacadeAccessor::class);
     }
 }

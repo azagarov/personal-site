@@ -4,7 +4,8 @@ namespace Blog\Controllers;
 
 use Blog\BlogCategory;
 use Blog\BlogPost;
-use Blog\Contracts\BlogService;
+use Blog\BlogPostEditable;
+use Blog\Contracts\BlogEditableService;
 use Blog\Facades\Blog;
 use Illuminate\Http\Request;
 use \App\Http\Controllers\Controller;
@@ -12,7 +13,6 @@ use \App\Http\Controllers\Controller;
 class AdminBlogController extends Controller
 {
     public function PostsList(Request $request) {
-
     	return view('admin.blog.posts')->with([
 		    'selectedMenuItem' => 'blog-posts-list',
 	    ]);
@@ -67,16 +67,7 @@ class AdminBlogController extends Controller
     }
 
     public function PostGetAjax($id, Request $request) {
-    	if(is_numeric($id) && $post = BlogPost::find($id)) {
-    		$response = $this->_getPostJsonObj($post);
-	    } else {
-    		$response = [
-			    'status' => BlogPost::STATUS_PRIVATE,
-			    'main_order' => 0,
-			    'categories' => [],
-		    ];
-	    }
-	    return response()->json($response);
+	    return response()->json($this->blog->GetPost($id)->prepareJson());
     }
 
     private function _getPostJsonObj(BlogPost $post) {
@@ -149,53 +140,10 @@ class AdminBlogController extends Controller
 
 	    $p = $this->_normalizePostMainInfoRequest($request->post);
 
-	    if(!$p->id) {
-		    $post = new BlogPost();
+	    $post = $this->blog->GetPost($p->id);
+	    $ok = $post->updateWith($p);
 
-		    $authorId = \Auth::id();
-		    if(!$authorId) {
-			    $authorId = 1; // Hardcoded My ID
-		    }
-		    $post->author_id = $authorId;
-
-		    $post->views_total = 0;
-		    $post->views_unique = 0;
-		    $post->shares_count = 0;
-
-	    } else {
-		    $post = BlogPost::find($p->id);
-	    }
-
-//	    	    return response()->json(['r' => $request, 'x' => $post]);
-
-	    /**
-	     * @var BlogPost $post
-	     */
-
-	    $post->slug = $p->slug;
-	    $post->status = $p->status;
-	    $post->main_order = $p->main_order;
-
-	    if(strtotime($p->date_occurred)) {
-		    $_obj = new \DateTime($p->date_occurred);
-		    $post->date_occurred = $_obj->format('Y-m-d');
-	    } else {
-		    $post->date_occurred = null;
-	    }
-
-	    $post->place_coordinates = $p->place_coordinates;
-	    $post->keywords = $p->keywords;
-
-	    $ok = $post->save();
-
-	    if($p->categories) {
-		    $post->categories()->sync($p->categories);
-	    } else {
-		    $post->categories()->sync([]);
-	    }
-
-
-    	return response()->json(['ok' => $ok, 'post' => $this->_getPostJsonObj($post), ]);
+    	return response()->json(['ok' => $ok, 'post' => $post->prepareJson(), ]);
     }
 
     private function _normalizePostLangInfoRequest($input) {
@@ -217,6 +165,14 @@ class AdminBlogController extends Controller
 	private $_langNames = ['en' => 'English', 'es' => 'Spanish', 'ru' => 'Russian', ];
 
 
+    public function __construct(BlogEditableService $blog) {
+    	$this->blog = $blog;
+    }
+
+	/**
+	 * @var BlogEditableService
+	 */
+	private $blog;
 
     // ****************** Deprecated *************************
 

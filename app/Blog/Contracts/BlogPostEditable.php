@@ -9,10 +9,17 @@
 namespace Blog\Contracts;
 
 interface BlogPostEditable extends BlogPost {
+
+	public function prepareJson(array $params = []);
+
 	/**
-	 * @param array $environment
+	 * @param \stdClass $p
 	 *
-	 * @return string
+	 * @return bool
 	 */
-	public function getUrl(array $environment = []);
+	public function updateWith(\stdClass $p);
+
+	public function publish();
+	public function unPublish();
+	public function delete();
 }
