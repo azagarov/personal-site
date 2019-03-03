@@ -12,9 +12,12 @@ namespace Blog\Contracts;
  * Interface CanHaveDraft
  * @package Blog\Contracts
  *
- * @return Draft
  */
 interface CanHaveDraft {
+
+	/**
+	 * @return Draft
+	 */
 	public function getDraft();
 
 	/**

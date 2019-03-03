@@ -13,7 +13,7 @@ use Blog\Draft;
 
 trait HasDraft {
 	public function canHaveDraft() {
-		return (bool)$this->id;
+		return true;
 	}
 
 	/**
@@ -32,6 +32,6 @@ trait HasDraft {
 	protected $_draft;
 
 	protected function _buildDraftHash() {
-		return get_class($this)."_".$this->id;
+		return get_class($this)."_id".($this->id ? $this->id : 'new');
 	}
 }

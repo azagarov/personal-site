@@ -162,7 +162,15 @@ class AdminBlogController extends Controller
     }
 
     public function PostLangGetAjax($id, $locale, Request $request) {
-    	return response()->json(BlogPost::find($id)->content($locale));
+	    $draft = [];
+	    $content = $this->blog->GetPost($id)->content($locale);
+	    if($content instanceof CanHaveDraft && $content->canHaveDraft()) {
+		    $draft = $content->getDraft()->getAll();
+	    }
+    	return response()->json([
+    		'content' => $content->prepareJson(),
+		    'draft' => $draft,
+	    ]);
     }
 
 
@@ -191,6 +199,19 @@ class AdminBlogController extends Controller
 		return response()->json(['ok' => true, 'field' => $field,]);
 	}
 
+	public function SavePostLangFieldDraft($id, $locale, $field, Request $request) {
+		$post = $this->blog->GetPost($id);
+		if(!$post) return abort(404);
+
+		$lang = $post->content($locale);
+
+		if($lang instanceof CanHaveDraft) {
+			$lang->getDraft()->setField($field, $request->value);
+		}
+
+		return response()->json(['ok' => true, 'field' => $field,]);
+	}
+
     // ****************** Deprecated *************************
 
     public function PostLangSaveAjax($id, $locale, Request $request) {
@@ -198,7 +219,7 @@ class AdminBlogController extends Controller
     	if(!$request->get('locale')) return abort(500);
     	if(!$request->get('content')) return abort(500);
 
-    	$post = BlogPost::find($request->postId);
+    	$post = $this->blog->GetPost($request->postId);
     	if(!$post) return abort(500);
 
 	    $p = $this->_normalizePostLangInfoRequest($request->get('content'));
@@ -212,6 +233,10 @@ class AdminBlogController extends Controller
 	    $content->place_description = $p->place_description;
 
 	    $ok = $content->save();
+
+	    if($content instanceof CanHaveDraft) {
+	    	$content->getDraft()->clearAll();
+	    }
 
     	return response()->json([
     		'ok' => $ok,

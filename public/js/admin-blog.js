@@ -2365,13 +2365,9 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
         post: {
             handler: function handler(_new, _old) {
-
                 if (_new == _old) {
                     this.$parent.$refs.dashboard.unsaved.main = true;
                 }
-                // console.log(_new.place_coordinates, _old.place_coordinates);
-                // const x = Object.keys(_new).map(key => {return {key:key, r:_new[key] == _old[key]};});
-                // console.log(x);
             },
 
             deep: true
@@ -2481,7 +2477,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                         return resolve(_this4.post);
                     } else {
                         _this4.isSaving = false;
-                        console.log(data);
+                        // console.log(data);
                         return reject({ code: 1 });
                     }
                     // console.log(response.data);
@@ -2537,7 +2533,11 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             content: {},
             isSaving: false,
             hasSaved: false,
-            changed: false
+            changed: false,
+
+            timersAreActive: null,
+            draftTimers: {},
+            draftSavings: {}
         };
     },
     mounted: function mounted() {
@@ -2545,13 +2545,32 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
         // alert(this._id);
 
+        this.timersAreActive = false;
         axios.get('/admin/blog/post/' + this._id + '/lang/' + this.locale).then(function (response) {
-            _this.content = response.data;
+            var _content = response.data.content;
+
+            var hasDraft = false;
+            Object.keys(response.data.draft).forEach(function (x) {
+                switch (x) {}
+                _content[x] = response.data.draft[x];
+                hasDraft = true;
+            });
+
+            if (hasDraft) {
+                _this.$parent.$refs.dashboard.unsaved.main = true;
+            }
+
+            _this.content = _content;
+
             var editor = CKEDITOR.replace('html_content_' + _this.locale);
             editor.on('change', function (ev) {
                 _this.content.html_content = editor.getData();
             });
-            _this.changed = false;
+            _this.changed = hasDraft;
+
+            setTimeout(function () {
+                _this.timersAreActive = true;
+            }, 1000);
         }).catch(function (e) {
             console.log(e);
             alert('Error Loading Data');
@@ -2568,6 +2587,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             var _this2 = this;
 
             this.isSaving = true;
+            this.timersAreActive = false;
             axios.post('/admin/blog/post/' + this._id + '/lang/' + this.locale, {
                 postId: this._id,
                 locale: this.locale,
@@ -2586,6 +2606,10 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 _this2.hasSaved = true;
 
                 _this2.isSaving = false;
+
+                setTimeout(function () {
+                    _this2.timersAreActive = true;
+                }, 1000);
             }).catch(function (e) {
                 _this2.isSaving = false;
                 _this2.$parent.openModal({
@@ -2593,7 +2617,36 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                     title: 'Error',
                     body: "Error Occurred During Saving Data. Try again later."
                 });
+
+                setTimeout(function () {
+                    _this2.timersAreActive = true;
+                }, 1000);
             });
+        },
+        handleDataUpdate: function handleDataUpdate(field, value) {
+            var _this3 = this;
+
+            // console.log("ever???");
+            if (!this._id) return;
+
+            clearTimeout(this.draftTimers[field]);
+            if (true === this.draftSavings[field]) return;
+            if (!this.timersAreActive) return;
+
+            this.draftTimers[field] = setTimeout(function () {
+
+                _this3.draftSavings[field] = true;
+
+                axios.post('/admin/blog/post/' + _this3._id + '/lang/' + _this3.locale + '/draft/' + field, {
+                    value: value
+                }).then(function (response) {
+                    _this3.draftSavings[field] = false;
+                    // console.log(response.data);
+                }).catch(function (e) {
+                    _this3.draftSavings[field] = false;
+                    console.log(e);
+                });
+            }, 2000);
         }
     },
     watch: {
@@ -2606,7 +2659,34 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             },
 
             deep: true
+        },
+
+        "content.title": {
+            handler: function handler(_new, _old) {
+                this.handleDataUpdate('title', _new);
+            }
+        },
+        "content.annotation": {
+            handler: function handler(_new, _old) {
+                this.handleDataUpdate('annotation', _new);
+            }
+        },
+        "content.html_content": {
+            handler: function handler(_new, _old) {
+                this.handleDataUpdate('html_content', _new);
+            }
+        },
+        "content.place_name": {
+            handler: function handler(_new, _old) {
+                this.handleDataUpdate('place_name', _new);
+            }
+        },
+        "content.place_description": {
+            handler: function handler(_new, _old) {
+                this.handleDataUpdate('place_description', _new);
+            }
         }
+
     }
 });
 
@@ -2793,14 +2873,14 @@ exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\
 /***/ (function(module, exports, __webpack_require__) {
 
 exports = module.exports = __webpack_require__(7)();
-exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", ""]);
+exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", ""]);
 
 /***/ }),
 /* 43 */
 /***/ (function(module, exports, __webpack_require__) {
 
 exports = module.exports = __webpack_require__(7)();
-exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", ""]);
+exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", ""]);
 
 /***/ }),
 /* 44 */

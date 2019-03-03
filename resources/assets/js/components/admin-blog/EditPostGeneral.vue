@@ -247,7 +247,7 @@ export default {
                         return resolve(this.post);
                     } else {
                         this.isSaving = false;
-                        console.log(data);
+                        // console.log(data);
                         return reject({code:1});
                     }
                     // console.log(response.data);

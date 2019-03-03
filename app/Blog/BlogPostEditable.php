@@ -8,14 +8,36 @@
 
 namespace Blog;
 
-use Blog\Contracts\BlogPostEditable as BlogPostContract;
+use Blog\Contracts\BlogPostEditable as BlogPostEditableContract;
 use Blog\Contracts\CanHaveDraft;
 use Blog\Traits\HasDraft;
 
-class BlogPostEditable extends BlogPost implements BlogPostContract, CanHaveDraft {
+class BlogPostEditable extends BlogPost implements BlogPostEditableContract, CanHaveDraft {
 	use HasDraft;
 
 	protected $table = "blog_posts";
+
+	public function localeContents() {
+		return $this->hasMany('Blog\BlogPostContentEditable', 'post_id');
+	}
+
+	public function content($locale = 'en') {
+		if(!isset($this->_content[$locale])) {
+			$content = $this->localeContents()->where('locale', '=', $locale)->first();
+
+			if(!$content) {
+				$content = new BlogPostContentEditable();
+				$content->post_id = $this->id;
+				$content->locale = $locale;
+			}
+
+			$this->_content[$locale] = $content;
+		}
+
+		return $this->_content[$locale];
+	}
+	private $_content = [];
+
 
 	public function prepareJson( array $params = [] ) {
 		$response = $this->toArray();
