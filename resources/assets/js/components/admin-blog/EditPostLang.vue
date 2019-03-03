@@ -5,6 +5,8 @@ export default {
         return {
             content: {},
             isSaving: false,
+            hasSaved: false,
+            changed: false
         }
     },
     mounted() {
@@ -12,10 +14,11 @@ export default {
 
         axios.get('/admin/blog/post/'+this._id+'/lang/'+this.locale).then(response => {
             this.content = response.data;
-            const editor = CKEDITOR.replace('html_content_'+this.locale)
+            const editor = CKEDITOR.replace('html_content_'+this.locale);
             editor.on('change', ev => {
                 this.content.html_content = editor.getData();
             });
+            this.changed = false;
         }).catch(e => {
            console.log(e);
            alert('Error Loading Data');
@@ -36,12 +39,15 @@ export default {
 
             }).then(response => {
                 const data = response.data;
-                console.log(data);
-                this.$parent.openModal({
-                    type: 'success',
-                    title: 'Success',
-                    body: this.lname + " Content has Successfully been Updated"
-                });
+                // console.log(data);
+                // this.$parent.openModal({
+                //     type: 'success',
+                //     title: 'Success',
+                //     body: this.lname + " Content has Successfully been Updated"
+                // });
+
+                this.changed = false;
+                this.hasSaved = true;
 
                 this.isSaving = false;
             }).catch(e => {
@@ -52,6 +58,17 @@ export default {
                     body: "Error Occurred During Saving Data. Try again later."
                 });
             });
+        }
+    },
+    watch: {
+        content: {
+            handler(_new, _old) {
+                if(_new == _old) {
+                    this.changed = true;
+                    this.hasSaved = false;
+                }
+            },
+            deep: true
         }
     }
 }

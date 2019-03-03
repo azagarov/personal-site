@@ -2161,9 +2161,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     watch: {
         unsaved: {
             handler: function handler(_new, _old) {
-                console.log(Object.values(this.unsaved).reduce(function (c, x) {
-                    return c || x;
-                }, false));
                 if (Object.values(this.unsaved).reduce(function (c, x) {
                     return c || x;
                 }, false)) {
@@ -2192,11 +2189,12 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 _this.unsaved.main = false;
                 _this.hasSaved = true;
             }).catch(function (e) {
-                switch (e) {
+                switch (e.code) {
                     case 0:
-                        alert('ok');
+                        // Form Errors
                         //do nothing
                         break;
+
                     default:
                         _this.$parent.openModal({
                             type: 'danger',
@@ -2408,7 +2406,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                     document.forms['general_post_form'].elements[Object.keys(_this4.validation).filter(function (x) {
                         return !_this4.validation[x];
                     })[0]].focus();
-                    return reject(0);
+                    return reject({ code: 0 });
                 }
 
                 _this4.isSaving = true;
@@ -2432,13 +2430,13 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                     } else {
                         _this4.isSaving = false;
                         console.log(data);
-                        return reject(1);
+                        return reject({ code: 1 });
                     }
                     // console.log(response.data);
                 }).catch(function (err) {
                     _this4.isSaving = false;
-                    console.log(err);
-                    return reject(2);
+                    // console.log(err);
+                    return reject({ code: 2 });
                 });
             });
         },
@@ -2460,7 +2458,9 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     data: function data() {
         return {
             content: {},
-            isSaving: false
+            isSaving: false,
+            hasSaved: false,
+            changed: false
         };
     },
     mounted: function mounted() {
@@ -2474,6 +2474,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             editor.on('change', function (ev) {
                 _this.content.html_content = editor.getData();
             });
+            _this.changed = false;
         }).catch(function (e) {
             console.log(e);
             alert('Error Loading Data');
@@ -2497,12 +2498,15 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
             }).then(function (response) {
                 var data = response.data;
-                console.log(data);
-                _this2.$parent.openModal({
-                    type: 'success',
-                    title: 'Success',
-                    body: _this2.lname + " Content has Successfully been Updated"
-                });
+                // console.log(data);
+                // this.$parent.openModal({
+                //     type: 'success',
+                //     title: 'Success',
+                //     body: this.lname + " Content has Successfully been Updated"
+                // });
+
+                _this2.changed = false;
+                _this2.hasSaved = true;
 
                 _this2.isSaving = false;
             }).catch(function (e) {
@@ -2513,6 +2517,18 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                     body: "Error Occurred During Saving Data. Try again later."
                 });
             });
+        }
+    },
+    watch: {
+        content: {
+            handler: function handler(_new, _old) {
+                if (_new == _old) {
+                    this.changed = true;
+                    this.hasSaved = false;
+                }
+            },
+
+            deep: true
         }
     }
 });
@@ -2686,7 +2702,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /***/ (function(module, exports, __webpack_require__) {
 
 exports = module.exports = __webpack_require__(7)();
-exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", ""]);
+exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", ""]);
 
 /***/ }),
 /* 41 */
@@ -2700,7 +2716,7 @@ exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\
 /***/ (function(module, exports, __webpack_require__) {
 
 exports = module.exports = __webpack_require__(7)();
-exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", ""]);
+exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", ""]);
 
 /***/ }),
 /* 43 */

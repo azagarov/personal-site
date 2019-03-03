@@ -35,9 +35,11 @@
             </div>
         </div>
         <div class="box-footer">
-            <button type="button" class="btn btn-primary" @click="save" :disabled="isSaving">
+            <button type="button" class="btn btn-save" :class="hasSaved ? 'btn-success' : 'btn-primary'" @click="save" :disabled="isSaving || !changed">
                 <i class="fa fa-spinner fa-spin" v-if="isSaving"></i>
-                Save {{ $lang['name'] }} Content
+                <i class="fa fa-check" v-if="hasSaved"></i>
+                <span v-if="hasSaved">Saved OK</span>
+                <span v-else>Save {{ $lang['name'] }} Content</span>
             </button>
         </div>
     </form>

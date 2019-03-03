@@ -31,7 +31,6 @@ export default {
     watch: {
         unsaved: {
             handler(_new, _old) {
-                console.log(Object.values(this.unsaved).reduce((c, x) => (c || x), false));
                 if(Object.values(this.unsaved).reduce((c, x) => (c || x), false)) {
                     this.hasSaved = false;
                 }
@@ -57,8 +56,7 @@ export default {
                 this.hasSaved = true;
             }).catch(e => {
                 switch(e.code) {
-                    case 0:
-                        alert('ok');
+                    case 0: // Form Errors
                         //do nothing
                         break;
 
