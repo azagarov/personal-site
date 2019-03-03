@@ -4,7 +4,8 @@ namespace Blog\Controllers;
 
 use Blog\BlogCategory;
 use Blog\BlogPost;
-use Blog\Contracts\Blog;
+use Blog\Contracts\BlogService;
+use Blog\Facades\Blog;
 use Illuminate\Http\Request;
 use \App\Http\Controllers\Controller;
 
@@ -88,7 +89,6 @@ class AdminBlogController extends Controller
     }
 
     public function EditPost($postId, Request $request) {
-
     	if($postId == 'new') {
 		    $post = new BlogPost();
 		    $post->status = BlogPost::STATUS_PRIVATE;

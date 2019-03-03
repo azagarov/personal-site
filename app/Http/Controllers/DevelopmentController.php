@@ -4,11 +4,11 @@ namespace App\Http\Controllers;
 
 use App\ContactsMessage;
 use Illuminate\Http\Request;
-use Blog\Contracts\Blog;
+use Blog\Contracts\BlogService;
 
 class DevelopmentController extends Controller
 {
-    public function ShowHomePage(Request $request, Blog $blog) {
+    public function ShowHomePage(Request $request, BlogService $blog) {
 
     	return view('development.home', [
     		'beginning' => $blog->GetPost('development-beginning', false),

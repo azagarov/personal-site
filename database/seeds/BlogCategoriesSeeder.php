@@ -2,8 +2,8 @@
 
 use Illuminate\Database\Seeder;
 
-use App\BlogCategory;
-use App\BlogCategoryContent;
+use Blog\BlogCategory;
+use Blog\BlogCategoryContent;
 
 class BlogCategoriesSeeder extends Seeder
 {

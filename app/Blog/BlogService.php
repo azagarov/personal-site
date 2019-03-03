@@ -8,10 +8,10 @@
 
 namespace Blog;
 
-use Blog\Contracts\Blog;
+use Blog\Contracts\BlogService as BlogContract;
 //use Blog\BlogPost;
 
-class BlogService implements Blog {
+class BlogService implements BlogContract {
 
 	public function GetPost( $input, $publicOnly = true ) {
 		$q = BlogPost::where('slug', $input);

@@ -4,13 +4,13 @@ namespace Blog\Controllers;
 
 use App\Http\Controllers\Controller;
 
-use Blog\Contracts\Blog;
+use Blog\Contracts\BlogService;
 use Illuminate\Http\Request;
 
 class BlogController extends Controller
 {
 
-	public function __construct(Blog $blog) {
+	public function __construct(BlogService $blog) {
 		$this->blog = $blog;
 	}
 

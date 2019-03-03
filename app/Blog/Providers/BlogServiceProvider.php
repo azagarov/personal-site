@@ -4,7 +4,7 @@ namespace Blog\Providers;
 
 use Illuminate\Support\ServiceProvider;
 
-use Blog\Contracts\Blog;
+use Blog\Contracts\BlogService as BlogContract;
 use Blog\BlogService;
 
 class BlogServiceProvider extends ServiceProvider
@@ -27,6 +27,7 @@ class BlogServiceProvider extends ServiceProvider
     public function register()
     {
         //
-	    $this->app->singleton(Blog::class, BlogService::class );
+	    $this->app->singleton(BlogContract::class, BlogService::class );
+	    $this->app->bind('blog', BlogService::class);
     }
 }

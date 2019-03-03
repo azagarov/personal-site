@@ -8,7 +8,7 @@
 
 namespace Blog\Contracts;
 
-interface Blog {
+interface BlogService {
 
 	/**
 	 * @param $input
