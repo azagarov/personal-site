@@ -40,6 +40,7 @@ export default {
                 this.$parent.hasPostId = true;
                 $('#date_occurred').datepicker('update', this.post.date_occurred);
                 $(".select2.categories").val(this.post.categories).trigger('change');
+
                 setTimeout(() => {
                     this.slugTimer = true;
                 }, 1000);
@@ -140,13 +141,9 @@ export default {
 
         post: {
             handler(_new, _old) {
-
                 if(_new == _old) {
                     this.$parent.$refs.dashboard.unsaved.main = true;
                 }
-                // console.log(_new.place_coordinates, _old.place_coordinates);
-                // const x = Object.keys(_new).map(key => {return {key:key, r:_new[key] == _old[key]};});
-                // console.log(x);
             },
             deep: true
         },
@@ -217,6 +214,8 @@ export default {
         save() {
             this.saving = true;
 
+            this.slugTimer = false;
+
             return new Promise((resolve, reject) => {
                 if(!this.valid) {
                     document.forms['general_post_form'].elements[Object.keys(this.validation).filter(x => !this.validation[x])[0]].focus();
@@ -229,6 +228,11 @@ export default {
                     post: this.post
                 }).then(response => {
                     const data = response.data;
+
+                    setTimeout(() => {
+                        this.slugTimer = true;
+                    }, 1000);
+
                     if(data.ok) {
 
                         // Update Header Data that is not under Vue control
@@ -250,6 +254,10 @@ export default {
                 }).catch(err => {
                     this.isSaving = false;
                     // console.log(err);
+                    setTimeout(() => {
+                        this.slugTimer = true;
+                    }, 1000);
+
                     return reject({code:2});
                 });
             });
