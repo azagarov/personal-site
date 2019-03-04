@@ -31,6 +31,14 @@ class BlogPostContentEditable extends BlogPostContent implements  CanHaveDraft {
 	}
 
 	public function updateWith( \stdClass $p ) {
+
+		$this->title = $p->title;
+		$this->annotation = $p->annotation;
+		$this->html_content = $p->html_content;
+		$this->place_name = $p->place_name;
+		$this->place_description = $p->place_description;
+
+		return $this->save();
 	}
 
 	public function __construct( array $attributes = [] ) {

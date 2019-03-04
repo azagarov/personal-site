@@ -23,4 +23,22 @@ class BlogEditableService implements BlogEditableContract {
 			return new BlogPostEditable();
 		}
 	}
+
+	public function GetList( array $params = [] ) {
+		$list = BlogPostEditable::where('status', '<>', BlogPostEditable::STATUS_DELETED)->get();
+		return $list;
+	}
+
+	public function CheckSlug($slug, $locale = 'en') {
+		if($post = BlogPostEditable::where('slug', $slug)->first()) {
+			return ['type' => 'post', 'id' => $post->id, 'title' => $post->$locale->title, ];
+		}
+
+		if($category = BlogCategory::where('slug', $slug)->first()) {
+			return ['type' => 'post', 'id' => $category->id, 'title' => $category->$locale->title, ];
+		}
+
+		return null;
+	}
+
 }

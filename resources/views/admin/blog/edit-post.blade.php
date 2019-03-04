@@ -3,20 +3,12 @@
 @section('title', 'Edit Blog Post')
 
 @section('page-header')
-    @if($post->id)
-        Edit Blog Post <small id="title_part">#{{ $post->id }} [{{ $post->slug }}]</small>
-    @else
-        Edit Blog Post <small id="title_part">New</small>
-    @endif
+    Edit Blog Post <small id="title_part">New</small>
 @endsection
 
 @section('breadcrumb')
     <li><a href="/admin/blog/posts"><i class="fa fa-pencil-square-o"></i> Blog Posts</a></li>
-    @if($post->id)
-        <li class="active" id="bc_part">Edit Post #{{ $post->id }}</li>
-    @else
-        <li class="active" id="bc_part">Create New Blog Post</li>
-    @endif
+    <li class="active" id="bc_part">Create New Blog Post</li>
 @endsection
 
 @push('middle_scripts')
@@ -63,7 +55,7 @@
     <div class="row">
         <div class="col-xs-12 col-sm-12 col-md-8 col-lg-9">
     <EditPostGeneral inline-template v-cloak ref="main"
-         _id="{{ $post->id }}"
+         _id="{{ $_id }}"
     >
     <div class="box box-primary">
         <div class="box-header with-border">
@@ -72,7 +64,7 @@
         <!-- /.box-header -->
         <!-- form start -->
         @php
-            $_urlPostId = $post->id;
+            $_urlPostId = $_id;
             if(!$_urlPostId) {
                 $_urlPostId = 'new';
             }
@@ -174,7 +166,6 @@
                         <select class="form-control" name="status" v-model="status">
                             @foreach(Blog\BlogPost::GetFullStatusesList() as $key => $value)
                                 <option value="{{ $key }}">{{ $value }}</option>
-                                {{--@if($key == $post->status) selected="selected" @endif--}}
                             @endforeach
                         </select>
                     </div>

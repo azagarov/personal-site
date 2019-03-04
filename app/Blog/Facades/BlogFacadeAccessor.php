@@ -43,4 +43,8 @@ class BlogFacadeAccessor {
 		});
 
 	}
+
+	public function langNames() {
+		return ['en' => 'English', 'es' => 'Spanish', 'ru' => 'Russian', ];
+	}
 }

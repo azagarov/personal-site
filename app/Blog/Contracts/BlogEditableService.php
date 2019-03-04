@@ -8,8 +8,6 @@
 
 namespace Blog\Contracts;
 
-use Blog\BlogPostEditable;
-
 interface BlogEditableService {
 
 	/**
@@ -18,4 +16,8 @@ interface BlogEditableService {
 	 * @return BlogPostEditable
 	 */
 	public function GetPost($id);
+
+	public function GetList(array $params = []);
+
+	public function CheckSlug($slug, $locale = 'en');
 }

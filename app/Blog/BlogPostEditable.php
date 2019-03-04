@@ -8,6 +8,7 @@
 
 namespace Blog;
 
+use Blog\Facades\Blog;
 use Blog\Contracts\BlogPostEditable as BlogPostEditableContract;
 use Blog\Contracts\CanHaveDraft;
 use Blog\Traits\HasDraft;
@@ -39,11 +40,58 @@ class BlogPostEditable extends BlogPost implements BlogPostEditableContract, Can
 	private $_content = [];
 
 
+	/**
+	 * @param array $params
+	 *   type : 'edit', 'list', ???;
+	 *     default=edit
+	 * @return array
+	 */
 	public function prepareJson( array $params = [] ) {
-		$response = $this->toArray();
-		$response['categories'] = $this->categories->map(function($x) {return $x->id;});
-		if($ts = strtotime($response['date_occurred'])) {
-			$response['date_occurred'] = date('m/d/Y', $ts);
+
+		$type = $params['type'] ?? 'edit';
+		switch($type) {
+			case 'list':
+				$response = [
+					'id' => $this->id,
+//			    'title' => $x->en->title,
+					'slug' => $this->slug,
+					'status' => $this->status,
+					'keywords' => $this->pkeywords(),
+
+				];
+
+				foreach(array_keys(Blog::langNames()) as $locale) {
+
+					$color = 'red';
+					if($this->$locale->id) {
+						$color = 'yellow';
+						if($this->$locale->title) {
+							$color = 'blue';
+							if($this->$locale->html_content) {
+								$color = 'green';
+							}
+						}
+					}
+
+					$response[$locale] = [
+						'title' => $this->$locale->title,
+						'color' => $color,
+						'categories' => $this->categories->map(function($c) use($locale) {
+							return $c->$locale->title;
+						}),
+					];
+				}
+
+				break;
+
+			case 'edit':
+			default:
+				$response = $this->toArray();
+				$response['categories'] = $this->categories->map(function($x) {return $x->id;});
+				if($ts = strtotime($response['date_occurred'])) {
+					$response['date_occurred'] = date('m/d/Y', $ts);
+				}
+				break;
 		}
 		return $response;
 	}

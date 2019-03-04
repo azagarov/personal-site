@@ -2252,6 +2252,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                     hasDraft = true;
                 });
                 _this.post = _post;
+                _this.updateOuterDom();
 
                 _this.$parent.$refs.dashboard.unsaved.main = hasDraft;
 
@@ -2415,18 +2416,22 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
             this.slugIsChecking = true;
             axios.post('/admin/blog/test_slug', {
-                slug: this.post.slug,
-                id: this.post.id
+                slug: this.post.slug
             }).then(function (response) {
                 var data = response.data;
-                if (data.ok) {
+
+                _this3.slugChanged = true;
+                _this3.slugIsChecking = false;
+
+                if (data.type == 'not_found') {
+                    _this3.slugOk = true;
+                } else if (data.type == 'post' && data.id == _this3.post.id) {
+                    _this3.slugChanged = false;
                     _this3.slugOk = true;
                 } else {
                     _this3.slugOk = false;
                     _this3.slugDupe = data;
                 }
-                _this3.slugIsChecking = false;
-                _this3.slugChanged = true;
             }).catch(function (e) {
                 console.log(e);
                 alert("Error");
@@ -2464,11 +2469,12 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                     if (data.ok) {
 
                         // Update Header Data that is not under Vue control
+
                         if (!_this4.post.id) {
                             window.history.replaceState({}, '', "/admin/blog/edit-post/" + data.post.id);
-                            $("#bc_part").html("Edit Post #" + data.post.id);
                         }
-                        $("#title_part").html("#" + data.post.id + " [" + data.post.slug + "]");
+                        _this4.updateOuterDom();
+
                         _this4.post = data.post;
 
                         _this4.isSaving = false;
@@ -2513,6 +2519,10 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                     console.log(e);
                 });
             }, 2000);
+        },
+        updateOuterDom: function updateOuterDom() {
+            $("#bc_part").html("Edit Post #" + this.post.id);
+            $("#title_part").html("#" + this.post.id + " [" + this.post.slug + "]");
         }
     }
 });
@@ -2878,7 +2888,7 @@ exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\
 /***/ (function(module, exports, __webpack_require__) {
 
 exports = module.exports = __webpack_require__(7)();
-exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", ""]);
+exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", ""]);
 
 /***/ }),
 /* 44 */

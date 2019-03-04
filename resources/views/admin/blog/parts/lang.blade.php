@@ -4,7 +4,7 @@
   lname="{{$lang['name']}}"
 >
 <div class="tab-pane{{ $lang['active'] }} overlay-wrapper" id="tab_lang_{{ $lang['locale'] }}" style="position:relative;">
-    <form role="form" name="form_lang_{{$lang['locale']}}" target="_self" method="post" action="/admin/blog/save-post/{{ $post->id }}/{{ $lang['locale'] }}">
+    <form role="form" name="form_lang_{{$lang['locale']}}" target="_self" method="post" action="/admin/blog/save-post/{{ $_id }}/{{ $lang['locale'] }}">
         {{ csrf_field() }}
 
         <input type="hidden" name="postId" v-model="_id" />

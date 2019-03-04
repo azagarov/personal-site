@@ -22,4 +22,12 @@ interface BlogPostEditable extends BlogPost {
 	public function publish();
 	public function unPublish();
 	public function delete();
+
+	/**
+	 * @param $locale
+	 *
+	 * @return BlogPostContentEditable
+	 */
+	public function content($locale);
+
 }

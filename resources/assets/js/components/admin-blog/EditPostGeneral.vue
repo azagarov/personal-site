@@ -32,6 +32,7 @@ export default {
                     hasDraft = true;
                 });
                 this.post = _post;
+                this.updateOuterDom();
 
                 this.$parent.$refs.dashboard.unsaved.main = hasDraft;
 
@@ -188,18 +189,22 @@ export default {
 
             this.slugIsChecking = true;
             axios.post('/admin/blog/test_slug', {
-                slug: this.post.slug,
-                id: this.post.id
+                slug: this.post.slug
             }).then(response => {
                 const data = response.data;
-                if(data.ok) {
+
+                this.slugChanged = true;
+                this.slugIsChecking = false;
+
+                if(data.type == 'not_found') {
                     this.slugOk = true;
-                } else {
+                } else if(data.type == 'post' && data.id == this.post.id) {
+                    this.slugChanged = false;
+                    this.slugOk = true;
+                } else{
                     this.slugOk = false;
                     this.slugDupe = data;
                 }
-                this.slugIsChecking = false;
-                this.slugChanged = true;
             }).catch(e => {
                 console.log(e);
                 alert("Error");
@@ -234,11 +239,12 @@ export default {
                     if(data.ok) {
 
                         // Update Header Data that is not under Vue control
+
                         if(!this.post.id) {
                             window.history.replaceState({}, '', "/admin/blog/edit-post/" + data.post.id);
-                            $("#bc_part").html("Edit Post #" + data.post.id);
                         }
-                        $("#title_part").html("#" + data.post.id + " [" + data.post.slug + "]");
+                        this.updateOuterDom();
+
                         this.post = data.post;
 
                         this.isSaving = false;
@@ -282,6 +288,12 @@ export default {
                     console.log(e);
                 });
             }, 2000);
+        },
+
+        updateOuterDom() {
+            $("#bc_part").html("Edit Post #" + this.post.id);
+            $("#title_part").html("#" + this.post.id + " [" + this.post.slug + "]");
+
         }
     }
 }

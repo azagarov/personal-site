@@ -8,7 +8,6 @@
 
 namespace Blog\Contracts;
 
-
 interface BlogPost {
 	/**
 	 * @param array $environment
@@ -20,4 +19,11 @@ interface BlogPost {
 	public function recordView(array $environment = []);
 
 	public function recordShare(array $environment = []);
+
+	/**
+	 * @param $locale
+	 *
+	 * @return BlogPostContent
+	 */
+	public function content($locale);
 }

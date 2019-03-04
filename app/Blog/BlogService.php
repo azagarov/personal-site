@@ -27,4 +27,5 @@ class BlogService implements BlogContract {
 
 		return $article;
 	}
+
 }
