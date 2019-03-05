@@ -9,6 +9,11 @@
 namespace Blog\Contracts;
 
 interface BlogPost {
+	const STATUS_PUBLIC = 'public';
+	const STATUS_PRIVATE = 'private';
+	const STATUS_DELETED = 'deleted';
+
+
 	/**
 	 * @param array $environment
 	 *

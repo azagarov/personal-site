@@ -7,11 +7,7 @@ use Blog\Contracts\BlogPost as BlogPostContract;
 
 class BlogPost extends Model implements BlogPostContract
 {
-	const STATUS_PUBLIC = 'public';
-	const STATUS_PRIVATE = 'private';
-	const STATUS_DELETED = 'deleted';
-
-    public function localeContents() {
+	public function localeContents() {
     	return $this->hasMany('Blog\BlogPostContent', 'post_id');
     }
 

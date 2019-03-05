@@ -41,4 +41,8 @@ class BlogEditableService implements BlogEditableContract {
 		return null;
 	}
 
+	public function GetCategories() {
+		return BlogCategory::all();
+	}
+
 }

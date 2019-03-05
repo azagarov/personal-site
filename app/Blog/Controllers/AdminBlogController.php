@@ -4,9 +4,9 @@ namespace Blog\Controllers;
 
 use Blog\Contracts\BlogEditableService;
 use Blog\Contracts\CanHaveDraft;
+use Blog\Contracts\BlogPostEditable;
 
 use Blog\BlogCategory;
-use Blog\BlogPostEditable;
 
 use Blog\Facades\Blog;
 use Illuminate\Http\Request;
@@ -33,7 +33,7 @@ class AdminBlogController extends Controller
 
 		return view('admin.blog.edit-post')->with([
 			'_id' => $postId,
-			'categories' => BlogCategory::all(),
+			'categories' => $this->blog->GetCategories(),
 			'selectedMenuItem' => ('new' == $postId ? 'new-blog-post' : 'blog-posts-list'),
 		]);
 	}

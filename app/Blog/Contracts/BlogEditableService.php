@@ -20,4 +20,6 @@ interface BlogEditableService {
 	public function GetList(array $params = []);
 
 	public function CheckSlug($slug, $locale = 'en');
+
+	public function GetCategories();
 }

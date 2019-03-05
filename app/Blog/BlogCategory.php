@@ -9,11 +9,6 @@ use Blog\Contracts\BlogCategory as BlogCategoryContract;
 class BlogCategory extends Model implements BlogCategoryContract
 {
 
-	const STATUS_PUBLIC = 'public';
-	const STATUS_PRIVATE = 'private';
-	const STATUS_DELETED = 'deleted';
-
-
 	public function __get( $key ) {
 
 		if(in_array($key, ['en', 'es', 'ru'])) {

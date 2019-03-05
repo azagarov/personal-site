@@ -9,5 +9,8 @@
 namespace Blog\Contracts;
 
 interface BlogCategory {
+	const STATUS_PUBLIC = 'public';
+	const STATUS_PRIVATE = 'private';
+	const STATUS_DELETED = 'deleted';
 
 }
