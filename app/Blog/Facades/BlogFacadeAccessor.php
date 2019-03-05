@@ -6,7 +6,7 @@
  * Time: 14:36
  */
 
-namespace App\Blog\Facades;
+namespace Blog\Facades;
 use Route;
 
 class BlogFacadeAccessor {

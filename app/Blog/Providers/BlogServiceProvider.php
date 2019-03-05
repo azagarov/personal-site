@@ -2,7 +2,7 @@
 
 namespace Blog\Providers;
 
-use App\Blog\Facades\BlogFacadeAccessor;
+use Blog\Facades\BlogFacadeAccessor;
 use Illuminate\Support\ServiceProvider;
 
 use Blog\Contracts\BlogService as BlogContract;
