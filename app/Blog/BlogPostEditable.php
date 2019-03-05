@@ -88,7 +88,7 @@ class BlogPostEditable extends BlogPost implements BlogPostEditableContract, Can
 			default:
 				$response = $this->toArray();
 				$response['categories'] = $this->categories->map(function($x) {return $x->id;});
-				if($ts = strtotime($response['date_occurred'])) {
+				if($ts = strtotime(@$response['date_occurred'])) {
 					$response['date_occurred'] = date('m/d/Y', $ts);
 				}
 				break;
