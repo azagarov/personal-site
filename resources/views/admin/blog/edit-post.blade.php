@@ -12,17 +12,19 @@
 @endsection
 
 @push('middle_scripts')
-    <script src="/bower_components/AdminLTE/plugins/select2/select2.full.min.js"></script>
-    <script src="/bower_components/AdminLTE/plugins/datepicker/bootstrap-datepicker.js"></script>
-    <script src="/bower_components/AdminLTE/plugins/ckeditor/ckeditor.js"></script>
+    <script src="{{ adminlte('/plugins/select2/dist/js/select2.full.min.js') }}"></script>
+    <script src="{{ adminlte('/plugins/bootstrap-datepicker/dist/js/bootstrap-datepicker.js') }}"></script>
+    <script src="{{ adminlte('/plugins/ckeditor/ckeditor.js') }}"></script>
+
+    <script type="text/javascript" src="/js/admin-blog.js"></script>
 @endpush
 
 @push('scripts')
 @endpush
 
 @push('styles')
-    <link rel="stylesheet" href="/bower_components/AdminLTE/plugins/datepicker/datepicker3.css">
-<link rel="stylesheet" href="/bower_components/AdminLTE/plugins/select2/select2.min.css">
+    <link rel="stylesheet" href="{{ adminlte('/plugins/bootstrap-datepicker/dist/css/bootstrap-datepicker3.css') }}">
+<link rel="stylesheet" href="{{ adminlte('/plugins/select2/dist/css/select2.min.css') }}">
     <style>
         .fade-enter-active, .fade-leave-active {
             transition: opacity 1.5s;

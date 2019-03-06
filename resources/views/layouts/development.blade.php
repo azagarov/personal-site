@@ -18,10 +18,10 @@
     <script src="/templated-ion/js/init.js"></script>
 
     <!-- Bootstrap 3.3.6 -->
-    {{--<link rel="stylesheet" href="/bower_components/AdminLTE/bootstrap/css/bootstrap.min.css">--}}
+    {{--<link rel="stylesheet" href="{{ adminlte('/bootstrap/css/bootstrap.min.css') }}">--}}
 
     <!-- Bootstrap 3.3.6 -->
-    {{--<script src="/bower_components/AdminLTE/bootstrap/js/bootstrap.min.js"></script>--}}
+    {{--<script src="{{ adminlte('/bootstrap/js/bootstrap.min.js') }}"></script>--}}
 
     <noscript>
         <link rel="stylesheet" href="/templated-ion/css/skel.css" />

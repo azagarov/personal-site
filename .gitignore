@@ -4,6 +4,7 @@
 #/public/bower_components
 /storage/*.key
 /vendor
+/public/vendor
 /.vagrant
 npm-debug.log
 .env

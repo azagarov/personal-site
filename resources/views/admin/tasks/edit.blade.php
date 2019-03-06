@@ -19,16 +19,30 @@
     @endif
 @endsection
 
+@push('middle_scripts')
+    <script src="{{ adminlte('/plugins/bootstrap-datepicker/dist/js/bootstrap-datepicker.js') }}"></script>
+    <script src="{{ adminlte('/plugins/select2/dist/js/select2.full.min.js') }}"></script>
+    <script src="{{ adminlte('/plugins/bootstrap-slider/bootstrap-slider.js') }}"></script>
+@endpush
+
 @push('scripts')
-    <script src="/bower_components/AdminLTE/plugins/datepicker/bootstrap-datepicker.js"></script>
-    <script src="/bower_components/AdminLTE/plugins/select2/select2.full.min.js"></script>
-    <script src="/bower_components/AdminLTE/plugins/bootstrap-slider/bootstrap-slider.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $('#date_due').datepicker({
+                autoclose: true
+            });
+
+            $(".select2").select2();
+
+            $('.slider').slider();
+        });
+    </script>
 @endpush
 
 @push('styles')
-    <link rel="stylesheet" href="/bower_components/AdminLTE/plugins/datepicker/datepicker3.css">
-    <link rel="stylesheet" href="/bower_components/AdminLTE/plugins/select2/select2.min.css">
-    <link rel="stylesheet" href="/bower_components/AdminLTE/plugins/bootstrap-slider/slider.css">
+    <link rel="stylesheet" href="{{ adminlte('/plugins/bootstrap-datepicker/dist/css/bootstrap-datepicker3.css') }}">
+    <link rel="stylesheet" href="{{ adminlte('/plugins/select2/dist/css/select2.min.css') }}">
+    <link rel="stylesheet" href="{{ adminlte('/plugins/bootstrap-slider/slider.css') }}">
 @endpush
 
 @section('content')
@@ -157,15 +171,4 @@
     </div>
 
 
-    <script type="text/javascript">
-        $(document).ready(function() {
-            $('#date_due').datepicker({
-                autoclose: true
-            });
-
-            $(".select2").select2();
-
-            $('.slider').slider();
-        });
-    </script>
 @endsection

@@ -11,6 +11,16 @@
     <li class="active">Tasks</li>
 @endsection
 
+@push('scripts')
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $(".btn-add-task").click(function() {
+                document.location.href = "{{ url('/admin/tasks/edit/new') }}";
+            });
+        });
+    </script>
+@endpush
+
 @section('content')
 
     <div class="row">
@@ -101,12 +111,5 @@
         </div>
     </div>
 
-    <script type="text/javascript">
-        $(document).ready(function() {
-            $(".btn-add-task").click(function() {
-                document.location.href = "{{ url('/admin/tasks/edit/new') }}";
-            });
-        });
-    </script>
 
 @endsection

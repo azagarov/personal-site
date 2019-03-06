@@ -11,6 +11,10 @@
     <li class="active">Blog Posts</li>
 @endsection
 
+@push('middle_scripts')
+    <script type="text/javascript" src="/js/admin-blog.js"></script>
+@endpush
+
 @section('content')
 <style>
     .fade-enter-active, .fade-leave-active {
