@@ -276,6 +276,7 @@
                                 ['MySQL', 100, 'gold'],
                                 ['SQLite', 75, 'brown'],
                                 ['Postgres', 60, 'green'],
+                                ['Redis', 60, 'red'],
                                 ['MongoDB', 60, 'blue'],
                                 ['ElasticSearch', 50, 'yellow'],
                                 //['Objective C', 25, 'brown'],
@@ -331,7 +332,7 @@
                     <p>
                         Design Patterns, AJAX, RESTful, API, WSDL, OAuth, 2-ways Authentication, Git, SVN, FB Apps,
                         XML, XSLT,
-                        3rd Party systems integration, Complex Reporting systems, I will never disappear
+                        3rd Party systems integration, Complex Reporting systems, AWS, Microsoft Azure, I will never disappear
                     </p>
 
                     <br />
