@@ -297,7 +297,7 @@
                                 ['WordPress (PHP)', 90, 'green'],
                                 ['Cocoa / CocoaTouch (Swift)', 60, 'blue'],
                                 ['Joomla (PHP)', 50, 'yellow'],
-                                ['Magenta (PHP)', 50, 'brown'],
+                                ['Magento (PHP)', 50, 'brown'],
                                 //['Java', 20, 'red'],
                             ],
                         ];
