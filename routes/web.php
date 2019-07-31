@@ -24,6 +24,7 @@ $router->group(['middleware' => ['check.locale']], function($router) {
 	Route::get('/traveling/', 'HomePageController@Show');
 
 	Blog::publicRoutes();
+	Portfolio::publicRoutes();
 
 	// ******************************************************************************
 	// ************************ Administration Part *********************************
@@ -46,6 +47,7 @@ $router->group(['middleware' => ['check.locale']], function($router) {
 
 			// *************************** Blog Administration ********************************
 			Blog::adminRoutes();
+			Portfolio::adminRoutes();
 		});
 	});
 });

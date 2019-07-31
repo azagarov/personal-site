@@ -177,9 +177,10 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
 
-        App\Providers\AdminLteServiceProvider::class,
+        AdminLTE\Providers\AdminLteServiceProvider::class,
 
 	    Blog\Providers\BlogServiceProvider::class,
+	    Portfolio\Providers\PortfolioServiceProvider::class,
         ],
 
     /*
@@ -231,6 +232,7 @@ return [
         'View' => Illuminate\Support\Facades\View::class,
 
 	    'Blog' => Blog\Facades\Blog::class,
+	    'Portfolio' => Portfolio\Facades\Portfolio::class,
     ],
 
 ];

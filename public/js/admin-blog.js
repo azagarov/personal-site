@@ -63,7 +63,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 64);
+/******/ 	return __webpack_require__(__webpack_require__.s = 86);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -73,7 +73,7 @@
 "use strict";
 
 
-var bind = __webpack_require__(6);
+var bind = __webpack_require__(9);
 
 /*global toString:true*/
 
@@ -380,7 +380,7 @@ module.exports = {
 /* WEBPACK VAR INJECTION */(function(process) {
 
 var utils = __webpack_require__(0);
-var normalizeHeaderName = __webpack_require__(27);
+var normalizeHeaderName = __webpack_require__(26);
 
 var PROTECTION_PREFIX = /^\)\]\}',?\n/;
 var DEFAULT_CONTENT_TYPE = {
@@ -397,10 +397,10 @@ function getDefaultAdapter() {
   var adapter;
   if (typeof XMLHttpRequest !== 'undefined') {
     // For browsers use XHR adapter
-    adapter = __webpack_require__(2);
+    adapter = __webpack_require__(5);
   } else if (typeof process !== 'undefined') {
     // For node use HTTP adapter
-    adapter = __webpack_require__(2);
+    adapter = __webpack_require__(5);
   }
   return adapter;
 }
@@ -475,270 +475,6 @@ module.exports = defaults;
 
 /***/ }),
 /* 2 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var utils = __webpack_require__(0);
-var settle = __webpack_require__(19);
-var buildURL = __webpack_require__(22);
-var parseHeaders = __webpack_require__(28);
-var isURLSameOrigin = __webpack_require__(26);
-var createError = __webpack_require__(5);
-var btoa = (typeof window !== 'undefined' && window.btoa && window.btoa.bind(window)) || __webpack_require__(21);
-
-module.exports = function xhrAdapter(config) {
-  return new Promise(function dispatchXhrRequest(resolve, reject) {
-    var requestData = config.data;
-    var requestHeaders = config.headers;
-
-    if (utils.isFormData(requestData)) {
-      delete requestHeaders['Content-Type']; // Let the browser set it
-    }
-
-    var request = new XMLHttpRequest();
-    var loadEvent = 'onreadystatechange';
-    var xDomain = false;
-
-    // For IE 8/9 CORS support
-    // Only supports POST and GET calls and doesn't returns the response headers.
-    // DON'T do this for testing b/c XMLHttpRequest is mocked, not XDomainRequest.
-    if ("development" !== 'test' &&
-        typeof window !== 'undefined' &&
-        window.XDomainRequest && !('withCredentials' in request) &&
-        !isURLSameOrigin(config.url)) {
-      request = new window.XDomainRequest();
-      loadEvent = 'onload';
-      xDomain = true;
-      request.onprogress = function handleProgress() {};
-      request.ontimeout = function handleTimeout() {};
-    }
-
-    // HTTP basic authentication
-    if (config.auth) {
-      var username = config.auth.username || '';
-      var password = config.auth.password || '';
-      requestHeaders.Authorization = 'Basic ' + btoa(username + ':' + password);
-    }
-
-    request.open(config.method.toUpperCase(), buildURL(config.url, config.params, config.paramsSerializer), true);
-
-    // Set the request timeout in MS
-    request.timeout = config.timeout;
-
-    // Listen for ready state
-    request[loadEvent] = function handleLoad() {
-      if (!request || (request.readyState !== 4 && !xDomain)) {
-        return;
-      }
-
-      // The request errored out and we didn't get a response, this will be
-      // handled by onerror instead
-      // With one exception: request that using file: protocol, most browsers
-      // will return status as 0 even though it's a successful request
-      if (request.status === 0 && !(request.responseURL && request.responseURL.indexOf('file:') === 0)) {
-        return;
-      }
-
-      // Prepare the response
-      var responseHeaders = 'getAllResponseHeaders' in request ? parseHeaders(request.getAllResponseHeaders()) : null;
-      var responseData = !config.responseType || config.responseType === 'text' ? request.responseText : request.response;
-      var response = {
-        data: responseData,
-        // IE sends 1223 instead of 204 (https://github.com/mzabriskie/axios/issues/201)
-        status: request.status === 1223 ? 204 : request.status,
-        statusText: request.status === 1223 ? 'No Content' : request.statusText,
-        headers: responseHeaders,
-        config: config,
-        request: request
-      };
-
-      settle(resolve, reject, response);
-
-      // Clean up request
-      request = null;
-    };
-
-    // Handle low level network errors
-    request.onerror = function handleError() {
-      // Real errors are hidden from us by the browser
-      // onerror should only fire if it's a network error
-      reject(createError('Network Error', config));
-
-      // Clean up request
-      request = null;
-    };
-
-    // Handle timeout
-    request.ontimeout = function handleTimeout() {
-      reject(createError('timeout of ' + config.timeout + 'ms exceeded', config, 'ECONNABORTED'));
-
-      // Clean up request
-      request = null;
-    };
-
-    // Add xsrf header
-    // This is only done if running in a standard browser environment.
-    // Specifically not if we're in a web worker, or react-native.
-    if (utils.isStandardBrowserEnv()) {
-      var cookies = __webpack_require__(24);
-
-      // Add xsrf header
-      var xsrfValue = (config.withCredentials || isURLSameOrigin(config.url)) && config.xsrfCookieName ?
-          cookies.read(config.xsrfCookieName) :
-          undefined;
-
-      if (xsrfValue) {
-        requestHeaders[config.xsrfHeaderName] = xsrfValue;
-      }
-    }
-
-    // Add headers to the request
-    if ('setRequestHeader' in request) {
-      utils.forEach(requestHeaders, function setRequestHeader(val, key) {
-        if (typeof requestData === 'undefined' && key.toLowerCase() === 'content-type') {
-          // Remove Content-Type if data is undefined
-          delete requestHeaders[key];
-        } else {
-          // Otherwise add header to the request
-          request.setRequestHeader(key, val);
-        }
-      });
-    }
-
-    // Add withCredentials to request if needed
-    if (config.withCredentials) {
-      request.withCredentials = true;
-    }
-
-    // Add responseType to request if needed
-    if (config.responseType) {
-      try {
-        request.responseType = config.responseType;
-      } catch (e) {
-        if (request.responseType !== 'json') {
-          throw e;
-        }
-      }
-    }
-
-    // Handle progress if needed
-    if (typeof config.onDownloadProgress === 'function') {
-      request.addEventListener('progress', config.onDownloadProgress);
-    }
-
-    // Not all browsers support upload events
-    if (typeof config.onUploadProgress === 'function' && request.upload) {
-      request.upload.addEventListener('progress', config.onUploadProgress);
-    }
-
-    if (config.cancelToken) {
-      // Handle cancellation
-      config.cancelToken.promise.then(function onCanceled(cancel) {
-        if (!request) {
-          return;
-        }
-
-        request.abort();
-        reject(cancel);
-        // Clean up request
-        request = null;
-      });
-    }
-
-    if (requestData === undefined) {
-      requestData = null;
-    }
-
-    // Send the request
-    request.send(requestData);
-  });
-};
-
-
-/***/ }),
-/* 3 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-/**
- * A `Cancel` is an object that is thrown when an operation is canceled.
- *
- * @class
- * @param {string=} message The message.
- */
-function Cancel(message) {
-  this.message = message;
-}
-
-Cancel.prototype.toString = function toString() {
-  return 'Cancel' + (this.message ? ': ' + this.message : '');
-};
-
-Cancel.prototype.__CANCEL__ = true;
-
-module.exports = Cancel;
-
-
-/***/ }),
-/* 4 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-module.exports = function isCancel(value) {
-  return !!(value && value.__CANCEL__);
-};
-
-
-/***/ }),
-/* 5 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var enhanceError = __webpack_require__(18);
-
-/**
- * Create an Error with the specified message, config, error code, and response.
- *
- * @param {string} message The error message.
- * @param {Object} config The config.
- * @param {string} [code] The error code (for example, 'ECONNABORTED').
- @ @param {Object} [response] The response.
- * @returns {Error} The created error.
- */
-module.exports = function createError(message, config, code, response) {
-  var error = new Error(message);
-  return enhanceError(error, config, code, response);
-};
-
-
-/***/ }),
-/* 6 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-module.exports = function bind(fn, thisArg) {
-  return function wrap() {
-    var args = new Array(arguments.length);
-    for (var i = 0; i < args.length; i++) {
-      args[i] = arguments[i];
-    }
-    return fn.apply(thisArg, args);
-  };
-};
-
-
-/***/ }),
-/* 7 */
 /***/ (function(module, exports) {
 
 /*
@@ -794,7 +530,7 @@ module.exports = function() {
 
 
 /***/ }),
-/* 8 */
+/* 3 */
 /***/ (function(module, exports) {
 
 // this module is a runtime utility for cleaner component module output and will
@@ -851,7 +587,7 @@ module.exports = function normalizeComponent (
 
 
 /***/ }),
-/* 9 */
+/* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /*
@@ -870,7 +606,7 @@ if (typeof DEBUG !== 'undefined' && DEBUG) {
   ) }
 }
 
-var listToStyles = __webpack_require__(61)
+var listToStyles = __webpack_require__(31)
 
 /*
 type StyleObject = {
@@ -1072,6 +808,270 @@ function applyToTag (styleElement, obj) {
 
 
 /***/ }),
+/* 5 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var utils = __webpack_require__(0);
+var settle = __webpack_require__(18);
+var buildURL = __webpack_require__(21);
+var parseHeaders = __webpack_require__(27);
+var isURLSameOrigin = __webpack_require__(25);
+var createError = __webpack_require__(8);
+var btoa = (typeof window !== 'undefined' && window.btoa && window.btoa.bind(window)) || __webpack_require__(20);
+
+module.exports = function xhrAdapter(config) {
+  return new Promise(function dispatchXhrRequest(resolve, reject) {
+    var requestData = config.data;
+    var requestHeaders = config.headers;
+
+    if (utils.isFormData(requestData)) {
+      delete requestHeaders['Content-Type']; // Let the browser set it
+    }
+
+    var request = new XMLHttpRequest();
+    var loadEvent = 'onreadystatechange';
+    var xDomain = false;
+
+    // For IE 8/9 CORS support
+    // Only supports POST and GET calls and doesn't returns the response headers.
+    // DON'T do this for testing b/c XMLHttpRequest is mocked, not XDomainRequest.
+    if ("development" !== 'test' &&
+        typeof window !== 'undefined' &&
+        window.XDomainRequest && !('withCredentials' in request) &&
+        !isURLSameOrigin(config.url)) {
+      request = new window.XDomainRequest();
+      loadEvent = 'onload';
+      xDomain = true;
+      request.onprogress = function handleProgress() {};
+      request.ontimeout = function handleTimeout() {};
+    }
+
+    // HTTP basic authentication
+    if (config.auth) {
+      var username = config.auth.username || '';
+      var password = config.auth.password || '';
+      requestHeaders.Authorization = 'Basic ' + btoa(username + ':' + password);
+    }
+
+    request.open(config.method.toUpperCase(), buildURL(config.url, config.params, config.paramsSerializer), true);
+
+    // Set the request timeout in MS
+    request.timeout = config.timeout;
+
+    // Listen for ready state
+    request[loadEvent] = function handleLoad() {
+      if (!request || (request.readyState !== 4 && !xDomain)) {
+        return;
+      }
+
+      // The request errored out and we didn't get a response, this will be
+      // handled by onerror instead
+      // With one exception: request that using file: protocol, most browsers
+      // will return status as 0 even though it's a successful request
+      if (request.status === 0 && !(request.responseURL && request.responseURL.indexOf('file:') === 0)) {
+        return;
+      }
+
+      // Prepare the response
+      var responseHeaders = 'getAllResponseHeaders' in request ? parseHeaders(request.getAllResponseHeaders()) : null;
+      var responseData = !config.responseType || config.responseType === 'text' ? request.responseText : request.response;
+      var response = {
+        data: responseData,
+        // IE sends 1223 instead of 204 (https://github.com/mzabriskie/axios/issues/201)
+        status: request.status === 1223 ? 204 : request.status,
+        statusText: request.status === 1223 ? 'No Content' : request.statusText,
+        headers: responseHeaders,
+        config: config,
+        request: request
+      };
+
+      settle(resolve, reject, response);
+
+      // Clean up request
+      request = null;
+    };
+
+    // Handle low level network errors
+    request.onerror = function handleError() {
+      // Real errors are hidden from us by the browser
+      // onerror should only fire if it's a network error
+      reject(createError('Network Error', config));
+
+      // Clean up request
+      request = null;
+    };
+
+    // Handle timeout
+    request.ontimeout = function handleTimeout() {
+      reject(createError('timeout of ' + config.timeout + 'ms exceeded', config, 'ECONNABORTED'));
+
+      // Clean up request
+      request = null;
+    };
+
+    // Add xsrf header
+    // This is only done if running in a standard browser environment.
+    // Specifically not if we're in a web worker, or react-native.
+    if (utils.isStandardBrowserEnv()) {
+      var cookies = __webpack_require__(23);
+
+      // Add xsrf header
+      var xsrfValue = (config.withCredentials || isURLSameOrigin(config.url)) && config.xsrfCookieName ?
+          cookies.read(config.xsrfCookieName) :
+          undefined;
+
+      if (xsrfValue) {
+        requestHeaders[config.xsrfHeaderName] = xsrfValue;
+      }
+    }
+
+    // Add headers to the request
+    if ('setRequestHeader' in request) {
+      utils.forEach(requestHeaders, function setRequestHeader(val, key) {
+        if (typeof requestData === 'undefined' && key.toLowerCase() === 'content-type') {
+          // Remove Content-Type if data is undefined
+          delete requestHeaders[key];
+        } else {
+          // Otherwise add header to the request
+          request.setRequestHeader(key, val);
+        }
+      });
+    }
+
+    // Add withCredentials to request if needed
+    if (config.withCredentials) {
+      request.withCredentials = true;
+    }
+
+    // Add responseType to request if needed
+    if (config.responseType) {
+      try {
+        request.responseType = config.responseType;
+      } catch (e) {
+        if (request.responseType !== 'json') {
+          throw e;
+        }
+      }
+    }
+
+    // Handle progress if needed
+    if (typeof config.onDownloadProgress === 'function') {
+      request.addEventListener('progress', config.onDownloadProgress);
+    }
+
+    // Not all browsers support upload events
+    if (typeof config.onUploadProgress === 'function' && request.upload) {
+      request.upload.addEventListener('progress', config.onUploadProgress);
+    }
+
+    if (config.cancelToken) {
+      // Handle cancellation
+      config.cancelToken.promise.then(function onCanceled(cancel) {
+        if (!request) {
+          return;
+        }
+
+        request.abort();
+        reject(cancel);
+        // Clean up request
+        request = null;
+      });
+    }
+
+    if (requestData === undefined) {
+      requestData = null;
+    }
+
+    // Send the request
+    request.send(requestData);
+  });
+};
+
+
+/***/ }),
+/* 6 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+/**
+ * A `Cancel` is an object that is thrown when an operation is canceled.
+ *
+ * @class
+ * @param {string=} message The message.
+ */
+function Cancel(message) {
+  this.message = message;
+}
+
+Cancel.prototype.toString = function toString() {
+  return 'Cancel' + (this.message ? ': ' + this.message : '');
+};
+
+Cancel.prototype.__CANCEL__ = true;
+
+module.exports = Cancel;
+
+
+/***/ }),
+/* 7 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+module.exports = function isCancel(value) {
+  return !!(value && value.__CANCEL__);
+};
+
+
+/***/ }),
+/* 8 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var enhanceError = __webpack_require__(17);
+
+/**
+ * Create an Error with the specified message, config, error code, and response.
+ *
+ * @param {string} message The error message.
+ * @param {Object} config The config.
+ * @param {string} [code] The error code (for example, 'ECONNABORTED').
+ @ @param {Object} [response] The response.
+ * @returns {Error} The created error.
+ */
+module.exports = function createError(message, config, code, response) {
+  var error = new Error(message);
+  return enhanceError(error, config, code, response);
+};
+
+
+/***/ }),
+/* 9 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+module.exports = function bind(fn, thisArg) {
+  return function wrap() {
+    var args = new Array(arguments.length);
+    for (var i = 0; i < args.length; i++) {
+      args[i] = arguments[i];
+    }
+    return fn.apply(thisArg, args);
+  };
+};
+
+
+/***/ }),
 /* 10 */
 /***/ (function(module, exports) {
 
@@ -1262,22 +1262,21 @@ process.umask = function() { return 0; };
 
 
 /***/ }),
-/* 11 */,
-/* 12 */
+/* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(13);
+module.exports = __webpack_require__(12);
 
 /***/ }),
-/* 13 */
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
 var utils = __webpack_require__(0);
-var bind = __webpack_require__(6);
-var Axios = __webpack_require__(15);
+var bind = __webpack_require__(9);
+var Axios = __webpack_require__(14);
 var defaults = __webpack_require__(1);
 
 /**
@@ -1311,15 +1310,15 @@ axios.create = function create(instanceConfig) {
 };
 
 // Expose Cancel & CancelToken
-axios.Cancel = __webpack_require__(3);
-axios.CancelToken = __webpack_require__(14);
-axios.isCancel = __webpack_require__(4);
+axios.Cancel = __webpack_require__(6);
+axios.CancelToken = __webpack_require__(13);
+axios.isCancel = __webpack_require__(7);
 
 // Expose all/spread
 axios.all = function all(promises) {
   return Promise.all(promises);
 };
-axios.spread = __webpack_require__(29);
+axios.spread = __webpack_require__(28);
 
 module.exports = axios;
 
@@ -1328,13 +1327,13 @@ module.exports.default = axios;
 
 
 /***/ }),
-/* 14 */
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var Cancel = __webpack_require__(3);
+var Cancel = __webpack_require__(6);
 
 /**
  * A `CancelToken` is an object that can be used to request cancellation of an operation.
@@ -1392,7 +1391,7 @@ module.exports = CancelToken;
 
 
 /***/ }),
-/* 15 */
+/* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1400,10 +1399,10 @@ module.exports = CancelToken;
 
 var defaults = __webpack_require__(1);
 var utils = __webpack_require__(0);
-var InterceptorManager = __webpack_require__(16);
-var dispatchRequest = __webpack_require__(17);
-var isAbsoluteURL = __webpack_require__(25);
-var combineURLs = __webpack_require__(23);
+var InterceptorManager = __webpack_require__(15);
+var dispatchRequest = __webpack_require__(16);
+var isAbsoluteURL = __webpack_require__(24);
+var combineURLs = __webpack_require__(22);
 
 /**
  * Create a new instance of Axios
@@ -1484,7 +1483,7 @@ module.exports = Axios;
 
 
 /***/ }),
-/* 16 */
+/* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1543,15 +1542,15 @@ module.exports = InterceptorManager;
 
 
 /***/ }),
-/* 17 */
+/* 16 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
 var utils = __webpack_require__(0);
-var transformData = __webpack_require__(20);
-var isCancel = __webpack_require__(4);
+var transformData = __webpack_require__(19);
+var isCancel = __webpack_require__(7);
 var defaults = __webpack_require__(1);
 
 /**
@@ -1629,7 +1628,7 @@ module.exports = function dispatchRequest(config) {
 
 
 /***/ }),
-/* 18 */
+/* 17 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1655,13 +1654,13 @@ module.exports = function enhanceError(error, config, code, response) {
 
 
 /***/ }),
-/* 19 */
+/* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var createError = __webpack_require__(5);
+var createError = __webpack_require__(8);
 
 /**
  * Resolve or reject a Promise based on response status.
@@ -1687,7 +1686,7 @@ module.exports = function settle(resolve, reject, response) {
 
 
 /***/ }),
-/* 20 */
+/* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1714,7 +1713,7 @@ module.exports = function transformData(data, headers, fns) {
 
 
 /***/ }),
-/* 21 */
+/* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1757,7 +1756,7 @@ module.exports = btoa;
 
 
 /***/ }),
-/* 22 */
+/* 21 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1832,7 +1831,7 @@ module.exports = function buildURL(url, params, paramsSerializer) {
 
 
 /***/ }),
-/* 23 */
+/* 22 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1851,7 +1850,7 @@ module.exports = function combineURLs(baseURL, relativeURL) {
 
 
 /***/ }),
-/* 24 */
+/* 23 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1911,7 +1910,7 @@ module.exports = (
 
 
 /***/ }),
-/* 25 */
+/* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1932,7 +1931,7 @@ module.exports = function isAbsoluteURL(url) {
 
 
 /***/ }),
-/* 26 */
+/* 25 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2007,7 +2006,7 @@ module.exports = (
 
 
 /***/ }),
-/* 27 */
+/* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2026,7 +2025,7 @@ module.exports = function normalizeHeaderName(headers, normalizedName) {
 
 
 /***/ }),
-/* 28 */
+/* 27 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2070,7 +2069,7 @@ module.exports = function parseHeaders(headers) {
 
 
 /***/ }),
-/* 29 */
+/* 28 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2104,14 +2103,281 @@ module.exports = function spread(callback) {
 
 
 /***/ }),
+/* 29 */,
 /* 30 */
 /***/ (function(module, exports, __webpack_require__) {
 
-Vue.component("postslist", __webpack_require__(54));
-Vue.component("editpostmain", __webpack_require__(53));
-Vue.component("editpostgeneral", __webpack_require__(51));
-Vue.component("editpostlang", __webpack_require__(52));
-Vue.component("editpostdashboard", __webpack_require__(50));
+var __WEBPACK_AMD_DEFINE_RESULT__;/*
+ * Date Format 1.2.3
+ * (c) 2007-2009 Steven Levithan <stevenlevithan.com>
+ * MIT license
+ *
+ * Includes enhancements by Scott Trenda <scott.trenda.net>
+ * and Kris Kowal <cixar.com/~kris.kowal/>
+ *
+ * Accepts a date, a mask, or a date and a mask.
+ * Returns a formatted version of the given date.
+ * The date defaults to the current date/time.
+ * The mask defaults to dateFormat.masks.default.
+ */
+
+(function(global) {
+  'use strict';
+
+  var dateFormat = (function() {
+      var token = /d{1,4}|m{1,4}|yy(?:yy)?|([HhMsTt])\1?|[LloSZWN]|'[^']*'|'[^']*'/g;
+      var timezone = /\b(?:[PMCEA][SDP]T|(?:Pacific|Mountain|Central|Eastern|Atlantic) (?:Standard|Daylight|Prevailing) Time|(?:GMT|UTC)(?:[-+]\d{4})?)\b/g;
+      var timezoneClip = /[^-+\dA-Z]/g;
+  
+      // Regexes and supporting functions are cached through closure
+      return function (date, mask, utc, gmt) {
+  
+        // You can't provide utc if you skip other args (use the 'UTC:' mask prefix)
+        if (arguments.length === 1 && kindOf(date) === 'string' && !/\d/.test(date)) {
+          mask = date;
+          date = undefined;
+        }
+  
+        date = date || new Date;
+  
+        if(!(date instanceof Date)) {
+          date = new Date(date);
+        }
+  
+        if (isNaN(date)) {
+          throw TypeError('Invalid date');
+        }
+  
+        mask = String(dateFormat.masks[mask] || mask || dateFormat.masks['default']);
+  
+        // Allow setting the utc/gmt argument via the mask
+        var maskSlice = mask.slice(0, 4);
+        if (maskSlice === 'UTC:' || maskSlice === 'GMT:') {
+          mask = mask.slice(4);
+          utc = true;
+          if (maskSlice === 'GMT:') {
+            gmt = true;
+          }
+        }
+  
+        var _ = utc ? 'getUTC' : 'get';
+        var d = date[_ + 'Date']();
+        var D = date[_ + 'Day']();
+        var m = date[_ + 'Month']();
+        var y = date[_ + 'FullYear']();
+        var H = date[_ + 'Hours']();
+        var M = date[_ + 'Minutes']();
+        var s = date[_ + 'Seconds']();
+        var L = date[_ + 'Milliseconds']();
+        var o = utc ? 0 : date.getTimezoneOffset();
+        var W = getWeek(date);
+        var N = getDayOfWeek(date);
+        var flags = {
+          d:    d,
+          dd:   pad(d),
+          ddd:  dateFormat.i18n.dayNames[D],
+          dddd: dateFormat.i18n.dayNames[D + 7],
+          m:    m + 1,
+          mm:   pad(m + 1),
+          mmm:  dateFormat.i18n.monthNames[m],
+          mmmm: dateFormat.i18n.monthNames[m + 12],
+          yy:   String(y).slice(2),
+          yyyy: y,
+          h:    H % 12 || 12,
+          hh:   pad(H % 12 || 12),
+          H:    H,
+          HH:   pad(H),
+          M:    M,
+          MM:   pad(M),
+          s:    s,
+          ss:   pad(s),
+          l:    pad(L, 3),
+          L:    pad(Math.round(L / 10)),
+          t:    H < 12 ? 'a'  : 'p',
+          tt:   H < 12 ? 'am' : 'pm',
+          T:    H < 12 ? 'A'  : 'P',
+          TT:   H < 12 ? 'AM' : 'PM',
+          Z:    gmt ? 'GMT' : utc ? 'UTC' : (String(date).match(timezone) || ['']).pop().replace(timezoneClip, ''),
+          o:    (o > 0 ? '-' : '+') + pad(Math.floor(Math.abs(o) / 60) * 100 + Math.abs(o) % 60, 4),
+          S:    ['th', 'st', 'nd', 'rd'][d % 10 > 3 ? 0 : (d % 100 - d % 10 != 10) * d % 10],
+          W:    W,
+          N:    N
+        };
+  
+        return mask.replace(token, function (match) {
+          if (match in flags) {
+            return flags[match];
+          }
+          return match.slice(1, match.length - 1);
+        });
+      };
+    })();
+
+  dateFormat.masks = {
+    'default':               'ddd mmm dd yyyy HH:MM:ss',
+    'shortDate':             'm/d/yy',
+    'mediumDate':            'mmm d, yyyy',
+    'longDate':              'mmmm d, yyyy',
+    'fullDate':              'dddd, mmmm d, yyyy',
+    'shortTime':             'h:MM TT',
+    'mediumTime':            'h:MM:ss TT',
+    'longTime':              'h:MM:ss TT Z',
+    'isoDate':               'yyyy-mm-dd',
+    'isoTime':               'HH:MM:ss',
+    'isoDateTime':           'yyyy-mm-dd\'T\'HH:MM:sso',
+    'isoUtcDateTime':        'UTC:yyyy-mm-dd\'T\'HH:MM:ss\'Z\'',
+    'expiresHeaderFormat':   'ddd, dd mmm yyyy HH:MM:ss Z'
+  };
+
+  // Internationalization strings
+  dateFormat.i18n = {
+    dayNames: [
+      'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat',
+      'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'
+    ],
+    monthNames: [
+      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+      'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'
+    ]
+  };
+
+function pad(val, len) {
+  val = String(val);
+  len = len || 2;
+  while (val.length < len) {
+    val = '0' + val;
+  }
+  return val;
+}
+
+/**
+ * Get the ISO 8601 week number
+ * Based on comments from
+ * http://techblog.procurios.nl/k/n618/news/view/33796/14863/Calculate-ISO-8601-week-and-year-in-javascript.html
+ *
+ * @param  {Object} `date`
+ * @return {Number}
+ */
+function getWeek(date) {
+  // Remove time components of date
+  var targetThursday = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+
+  // Change date to Thursday same week
+  targetThursday.setDate(targetThursday.getDate() - ((targetThursday.getDay() + 6) % 7) + 3);
+
+  // Take January 4th as it is always in week 1 (see ISO 8601)
+  var firstThursday = new Date(targetThursday.getFullYear(), 0, 4);
+
+  // Change date to Thursday same week
+  firstThursday.setDate(firstThursday.getDate() - ((firstThursday.getDay() + 6) % 7) + 3);
+
+  // Check if daylight-saving-time-switch occurred and correct for it
+  var ds = targetThursday.getTimezoneOffset() - firstThursday.getTimezoneOffset();
+  targetThursday.setHours(targetThursday.getHours() - ds);
+
+  // Number of weeks between target Thursday and first Thursday
+  var weekDiff = (targetThursday - firstThursday) / (86400000*7);
+  return 1 + Math.floor(weekDiff);
+}
+
+/**
+ * Get ISO-8601 numeric representation of the day of the week
+ * 1 (for Monday) through 7 (for Sunday)
+ * 
+ * @param  {Object} `date`
+ * @return {Number}
+ */
+function getDayOfWeek(date) {
+  var dow = date.getDay();
+  if(dow === 0) {
+    dow = 7;
+  }
+  return dow;
+}
+
+/**
+ * kind-of shortcut
+ * @param  {*} val
+ * @return {String}
+ */
+function kindOf(val) {
+  if (val === null) {
+    return 'null';
+  }
+
+  if (val === undefined) {
+    return 'undefined';
+  }
+
+  if (typeof val !== 'object') {
+    return typeof val;
+  }
+
+  if (Array.isArray(val)) {
+    return 'array';
+  }
+
+  return {}.toString.call(val)
+    .slice(8, -1).toLowerCase();
+};
+
+
+
+  if (true) {
+    !(__WEBPACK_AMD_DEFINE_RESULT__ = function () {
+      return dateFormat;
+    }.call(exports, __webpack_require__, exports, module),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+  } else if (typeof exports === 'object') {
+    module.exports = dateFormat;
+  } else {
+    global.dateFormat = dateFormat;
+  }
+})(this);
+
+
+/***/ }),
+/* 31 */
+/***/ (function(module, exports) {
+
+/**
+ * Translates the list format produced by css-loader into something
+ * easier to manipulate.
+ */
+module.exports = function listToStyles (parentId, list) {
+  var styles = []
+  var newStyles = {}
+  for (var i = 0; i < list.length; i++) {
+    var item = list[i]
+    var id = item[0]
+    var css = item[1]
+    var media = item[2]
+    var sourceMap = item[3]
+    var part = {
+      id: parentId + ':' + i,
+      css: css,
+      media: media,
+      sourceMap: sourceMap
+    }
+    if (!newStyles[id]) {
+      styles.push(newStyles[id] = { id: id, parts: [part] })
+    } else {
+      newStyles[id].parts.push(part)
+    }
+  }
+  return styles
+}
+
+
+/***/ }),
+/* 32 */
+/***/ (function(module, exports, __webpack_require__) {
+
+Vue.component("postslist", __webpack_require__(66));
+Vue.component("editpostmain", __webpack_require__(65));
+Vue.component("editpostgeneral", __webpack_require__(63));
+Vue.component("editpostlang", __webpack_require__(64));
+Vue.component("editpostdashboard", __webpack_require__(62));
 
 // alert("Hey!!!");
 var app = new Vue({
@@ -2119,9 +2385,10 @@ var app = new Vue({
 });
 
 /***/ }),
-/* 31 */,
-/* 32 */,
-/* 33 */
+/* 33 */,
+/* 34 */,
+/* 35 */,
+/* 36 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2209,12 +2476,12 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 });
 
 /***/ }),
-/* 34 */
+/* 37 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_dateformat__ = __webpack_require__(45);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_dateformat__ = __webpack_require__(30);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_dateformat___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_dateformat__);
 
 
@@ -2528,7 +2795,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 });
 
 /***/ }),
-/* 35 */
+/* 38 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2699,7 +2966,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 });
 
 /***/ }),
-/* 36 */
+/* 39 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2731,12 +2998,12 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 });
 
 /***/ }),
-/* 37 */
+/* 40 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_axios__ = __webpack_require__(12);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_axios__ = __webpack_require__(11);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_axios___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_axios__);
 //
 //
@@ -2861,290 +3128,67 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 });
 
 /***/ }),
-/* 38 */,
-/* 39 */,
-/* 40 */
+/* 41 */,
+/* 42 */,
+/* 43 */,
+/* 44 */,
+/* 45 */,
+/* 46 */,
+/* 47 */,
+/* 48 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(7)();
+exports = module.exports = __webpack_require__(2)();
 exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", ""]);
 
 /***/ }),
-/* 41 */
+/* 49 */,
+/* 50 */,
+/* 51 */,
+/* 52 */,
+/* 53 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(7)();
+exports = module.exports = __webpack_require__(2)();
 exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", ""]);
 
 /***/ }),
-/* 42 */
+/* 54 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(7)();
+exports = module.exports = __webpack_require__(2)();
 exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", ""]);
 
 /***/ }),
-/* 43 */
+/* 55 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(7)();
+exports = module.exports = __webpack_require__(2)();
 exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", ""]);
 
 /***/ }),
-/* 44 */
+/* 56 */,
+/* 57 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(7)();
+exports = module.exports = __webpack_require__(2)();
 exports.push([module.i, "\n.post-categories[data-v-bed5a66a] {\n  padding: 5px;\n  margin: 2px;\n  background-color: #ebf1c3;\n  min-height: 42px;\n}\n.post-categories .cat-wrapper[data-v-bed5a66a]:before {\n    content: ', ';\n}\n.post-categories .cat-wrapper[data-v-bed5a66a]:first-of-type:before {\n    content: '';\n}\n.post-langs[data-v-bed5a66a] {\n  text-align: center;\n}\n.post-langs .lang-wrapper[data-v-bed5a66a]:before {\n    content: ' ';\n}\n.post-langs .lang-wrapper[data-v-bed5a66a]:first-of-type:before {\n    content: '';\n}\n.post-status[data-v-bed5a66a] {\n  border-bottom: dotted 1px #999;\n  padding: 0 10px 5px;\n  text-align: center;\n}\na.edit-post[data-v-bed5a66a] {\n  font-size: 1.5em;\n}\n.extra-controls[data-v-bed5a66a] {\n  margin-top: 16px;\n  padding: 8px 0;\n  border-top: solid 1px #ddd;\n  border-bottom: solid 1px #ddd;\n}\n.extra-controls .lang-selector[data-v-bed5a66a] {\n    text-align: right;\n}\n.products-list[data-v-bed5a66a] {\n  /*padding-left: 15px;*/\n}\n.products-list .item[data-v-bed5a66a]:hover {\n    background-color: #f9f9ff;\n}\n", ""]);
 
 /***/ }),
-/* 45 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var __WEBPACK_AMD_DEFINE_RESULT__;/*
- * Date Format 1.2.3
- * (c) 2007-2009 Steven Levithan <stevenlevithan.com>
- * MIT license
- *
- * Includes enhancements by Scott Trenda <scott.trenda.net>
- * and Kris Kowal <cixar.com/~kris.kowal/>
- *
- * Accepts a date, a mask, or a date and a mask.
- * Returns a formatted version of the given date.
- * The date defaults to the current date/time.
- * The mask defaults to dateFormat.masks.default.
- */
-
-(function(global) {
-  'use strict';
-
-  var dateFormat = (function() {
-      var token = /d{1,4}|m{1,4}|yy(?:yy)?|([HhMsTt])\1?|[LloSZWN]|'[^']*'|'[^']*'/g;
-      var timezone = /\b(?:[PMCEA][SDP]T|(?:Pacific|Mountain|Central|Eastern|Atlantic) (?:Standard|Daylight|Prevailing) Time|(?:GMT|UTC)(?:[-+]\d{4})?)\b/g;
-      var timezoneClip = /[^-+\dA-Z]/g;
-  
-      // Regexes and supporting functions are cached through closure
-      return function (date, mask, utc, gmt) {
-  
-        // You can't provide utc if you skip other args (use the 'UTC:' mask prefix)
-        if (arguments.length === 1 && kindOf(date) === 'string' && !/\d/.test(date)) {
-          mask = date;
-          date = undefined;
-        }
-  
-        date = date || new Date;
-  
-        if(!(date instanceof Date)) {
-          date = new Date(date);
-        }
-  
-        if (isNaN(date)) {
-          throw TypeError('Invalid date');
-        }
-  
-        mask = String(dateFormat.masks[mask] || mask || dateFormat.masks['default']);
-  
-        // Allow setting the utc/gmt argument via the mask
-        var maskSlice = mask.slice(0, 4);
-        if (maskSlice === 'UTC:' || maskSlice === 'GMT:') {
-          mask = mask.slice(4);
-          utc = true;
-          if (maskSlice === 'GMT:') {
-            gmt = true;
-          }
-        }
-  
-        var _ = utc ? 'getUTC' : 'get';
-        var d = date[_ + 'Date']();
-        var D = date[_ + 'Day']();
-        var m = date[_ + 'Month']();
-        var y = date[_ + 'FullYear']();
-        var H = date[_ + 'Hours']();
-        var M = date[_ + 'Minutes']();
-        var s = date[_ + 'Seconds']();
-        var L = date[_ + 'Milliseconds']();
-        var o = utc ? 0 : date.getTimezoneOffset();
-        var W = getWeek(date);
-        var N = getDayOfWeek(date);
-        var flags = {
-          d:    d,
-          dd:   pad(d),
-          ddd:  dateFormat.i18n.dayNames[D],
-          dddd: dateFormat.i18n.dayNames[D + 7],
-          m:    m + 1,
-          mm:   pad(m + 1),
-          mmm:  dateFormat.i18n.monthNames[m],
-          mmmm: dateFormat.i18n.monthNames[m + 12],
-          yy:   String(y).slice(2),
-          yyyy: y,
-          h:    H % 12 || 12,
-          hh:   pad(H % 12 || 12),
-          H:    H,
-          HH:   pad(H),
-          M:    M,
-          MM:   pad(M),
-          s:    s,
-          ss:   pad(s),
-          l:    pad(L, 3),
-          L:    pad(Math.round(L / 10)),
-          t:    H < 12 ? 'a'  : 'p',
-          tt:   H < 12 ? 'am' : 'pm',
-          T:    H < 12 ? 'A'  : 'P',
-          TT:   H < 12 ? 'AM' : 'PM',
-          Z:    gmt ? 'GMT' : utc ? 'UTC' : (String(date).match(timezone) || ['']).pop().replace(timezoneClip, ''),
-          o:    (o > 0 ? '-' : '+') + pad(Math.floor(Math.abs(o) / 60) * 100 + Math.abs(o) % 60, 4),
-          S:    ['th', 'st', 'nd', 'rd'][d % 10 > 3 ? 0 : (d % 100 - d % 10 != 10) * d % 10],
-          W:    W,
-          N:    N
-        };
-  
-        return mask.replace(token, function (match) {
-          if (match in flags) {
-            return flags[match];
-          }
-          return match.slice(1, match.length - 1);
-        });
-      };
-    })();
-
-  dateFormat.masks = {
-    'default':               'ddd mmm dd yyyy HH:MM:ss',
-    'shortDate':             'm/d/yy',
-    'mediumDate':            'mmm d, yyyy',
-    'longDate':              'mmmm d, yyyy',
-    'fullDate':              'dddd, mmmm d, yyyy',
-    'shortTime':             'h:MM TT',
-    'mediumTime':            'h:MM:ss TT',
-    'longTime':              'h:MM:ss TT Z',
-    'isoDate':               'yyyy-mm-dd',
-    'isoTime':               'HH:MM:ss',
-    'isoDateTime':           'yyyy-mm-dd\'T\'HH:MM:sso',
-    'isoUtcDateTime':        'UTC:yyyy-mm-dd\'T\'HH:MM:ss\'Z\'',
-    'expiresHeaderFormat':   'ddd, dd mmm yyyy HH:MM:ss Z'
-  };
-
-  // Internationalization strings
-  dateFormat.i18n = {
-    dayNames: [
-      'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat',
-      'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'
-    ],
-    monthNames: [
-      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
-      'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'
-    ]
-  };
-
-function pad(val, len) {
-  val = String(val);
-  len = len || 2;
-  while (val.length < len) {
-    val = '0' + val;
-  }
-  return val;
-}
-
-/**
- * Get the ISO 8601 week number
- * Based on comments from
- * http://techblog.procurios.nl/k/n618/news/view/33796/14863/Calculate-ISO-8601-week-and-year-in-javascript.html
- *
- * @param  {Object} `date`
- * @return {Number}
- */
-function getWeek(date) {
-  // Remove time components of date
-  var targetThursday = new Date(date.getFullYear(), date.getMonth(), date.getDate());
-
-  // Change date to Thursday same week
-  targetThursday.setDate(targetThursday.getDate() - ((targetThursday.getDay() + 6) % 7) + 3);
-
-  // Take January 4th as it is always in week 1 (see ISO 8601)
-  var firstThursday = new Date(targetThursday.getFullYear(), 0, 4);
-
-  // Change date to Thursday same week
-  firstThursday.setDate(firstThursday.getDate() - ((firstThursday.getDay() + 6) % 7) + 3);
-
-  // Check if daylight-saving-time-switch occurred and correct for it
-  var ds = targetThursday.getTimezoneOffset() - firstThursday.getTimezoneOffset();
-  targetThursday.setHours(targetThursday.getHours() - ds);
-
-  // Number of weeks between target Thursday and first Thursday
-  var weekDiff = (targetThursday - firstThursday) / (86400000*7);
-  return 1 + Math.floor(weekDiff);
-}
-
-/**
- * Get ISO-8601 numeric representation of the day of the week
- * 1 (for Monday) through 7 (for Sunday)
- * 
- * @param  {Object} `date`
- * @return {Number}
- */
-function getDayOfWeek(date) {
-  var dow = date.getDay();
-  if(dow === 0) {
-    dow = 7;
-  }
-  return dow;
-}
-
-/**
- * kind-of shortcut
- * @param  {*} val
- * @return {String}
- */
-function kindOf(val) {
-  if (val === null) {
-    return 'null';
-  }
-
-  if (val === undefined) {
-    return 'undefined';
-  }
-
-  if (typeof val !== 'object') {
-    return typeof val;
-  }
-
-  if (Array.isArray(val)) {
-    return 'array';
-  }
-
-  return {}.toString.call(val)
-    .slice(8, -1).toLowerCase();
-};
-
-
-
-  if (true) {
-    !(__WEBPACK_AMD_DEFINE_RESULT__ = function () {
-      return dateFormat;
-    }.call(exports, __webpack_require__, exports, module),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-  } else if (typeof exports === 'object') {
-    module.exports = dateFormat;
-  } else {
-    global.dateFormat = dateFormat;
-  }
-})(this);
-
-
-/***/ }),
-/* 46 */,
-/* 47 */,
-/* 48 */,
-/* 49 */,
-/* 50 */
+/* 58 */,
+/* 59 */,
+/* 60 */,
+/* 61 */,
+/* 62 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
 /* styles */
-__webpack_require__(56)
+__webpack_require__(74)
 
-var Component = __webpack_require__(8)(
+var Component = __webpack_require__(3)(
   /* script */
-  __webpack_require__(33),
+  __webpack_require__(36),
   /* template */
   null,
   /* scopeId */
@@ -3172,16 +3216,16 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 51 */
+/* 63 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
 /* styles */
-__webpack_require__(59)
+__webpack_require__(81)
 
-var Component = __webpack_require__(8)(
+var Component = __webpack_require__(3)(
   /* script */
-  __webpack_require__(34),
+  __webpack_require__(37),
   /* template */
   null,
   /* scopeId */
@@ -3209,16 +3253,16 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 52 */
+/* 64 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
 /* styles */
-__webpack_require__(58)
+__webpack_require__(80)
 
-var Component = __webpack_require__(8)(
+var Component = __webpack_require__(3)(
   /* script */
-  __webpack_require__(35),
+  __webpack_require__(38),
   /* template */
   null,
   /* scopeId */
@@ -3246,16 +3290,16 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 53 */
+/* 65 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
 /* styles */
-__webpack_require__(57)
+__webpack_require__(79)
 
-var Component = __webpack_require__(8)(
+var Component = __webpack_require__(3)(
   /* script */
-  __webpack_require__(36),
+  __webpack_require__(39),
   /* template */
   null,
   /* scopeId */
@@ -3283,18 +3327,18 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 54 */
+/* 66 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
 /* styles */
-__webpack_require__(60)
+__webpack_require__(83)
 
-var Component = __webpack_require__(8)(
+var Component = __webpack_require__(3)(
   /* script */
-  __webpack_require__(37),
+  __webpack_require__(40),
   /* template */
-  __webpack_require__(55),
+  __webpack_require__(73),
   /* scopeId */
   "data-v-bed5a66a",
   /* cssModules */
@@ -3321,7 +3365,13 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 55 */
+/* 67 */,
+/* 68 */,
+/* 69 */,
+/* 70 */,
+/* 71 */,
+/* 72 */,
+/* 73 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -3468,17 +3518,17 @@ if (false) {
 }
 
 /***/ }),
-/* 56 */
+/* 74 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
 
 // load the styles
-var content = __webpack_require__(40);
+var content = __webpack_require__(48);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(9)("0aaf3c7f", content, false);
+var update = __webpack_require__(4)("0aaf3c7f", content, false);
 // Hot Module Replacement
 if(false) {
  // When the styles change, update the <style> tags
@@ -3494,17 +3544,21 @@ if(false) {
 }
 
 /***/ }),
-/* 57 */
+/* 75 */,
+/* 76 */,
+/* 77 */,
+/* 78 */,
+/* 79 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
 
 // load the styles
-var content = __webpack_require__(41);
+var content = __webpack_require__(53);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(9)("7f005e94", content, false);
+var update = __webpack_require__(4)("7f005e94", content, false);
 // Hot Module Replacement
 if(false) {
  // When the styles change, update the <style> tags
@@ -3520,17 +3574,17 @@ if(false) {
 }
 
 /***/ }),
-/* 58 */
+/* 80 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
 
 // load the styles
-var content = __webpack_require__(42);
+var content = __webpack_require__(54);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(9)("1fecfb42", content, false);
+var update = __webpack_require__(4)("1fecfb42", content, false);
 // Hot Module Replacement
 if(false) {
  // When the styles change, update the <style> tags
@@ -3546,17 +3600,17 @@ if(false) {
 }
 
 /***/ }),
-/* 59 */
+/* 81 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
 
 // load the styles
-var content = __webpack_require__(43);
+var content = __webpack_require__(55);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(9)("5b25d76b", content, false);
+var update = __webpack_require__(4)("5b25d76b", content, false);
 // Hot Module Replacement
 if(false) {
  // When the styles change, update the <style> tags
@@ -3572,17 +3626,18 @@ if(false) {
 }
 
 /***/ }),
-/* 60 */
+/* 82 */,
+/* 83 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
 
 // load the styles
-var content = __webpack_require__(44);
+var content = __webpack_require__(57);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(9)("36be8c86", content, false);
+var update = __webpack_require__(4)("36be8c86", content, false);
 // Hot Module Replacement
 if(false) {
  // When the styles change, update the <style> tags
@@ -3598,45 +3653,12 @@ if(false) {
 }
 
 /***/ }),
-/* 61 */
-/***/ (function(module, exports) {
-
-/**
- * Translates the list format produced by css-loader into something
- * easier to manipulate.
- */
-module.exports = function listToStyles (parentId, list) {
-  var styles = []
-  var newStyles = {}
-  for (var i = 0; i < list.length; i++) {
-    var item = list[i]
-    var id = item[0]
-    var css = item[1]
-    var media = item[2]
-    var sourceMap = item[3]
-    var part = {
-      id: parentId + ':' + i,
-      css: css,
-      media: media,
-      sourceMap: sourceMap
-    }
-    if (!newStyles[id]) {
-      styles.push(newStyles[id] = { id: id, parts: [part] })
-    } else {
-      newStyles[id].parts.push(part)
-    }
-  }
-  return styles
-}
-
-
-/***/ }),
-/* 62 */,
-/* 63 */,
-/* 64 */
+/* 84 */,
+/* 85 */,
+/* 86 */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(30);
+module.exports = __webpack_require__(32);
 
 
 /***/ })

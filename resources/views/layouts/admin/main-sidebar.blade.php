@@ -26,9 +26,7 @@
     <!-- /.search form -->
 
     <!-- Sidebar Menu -->
-    <ul class="sidebar-menu">
-        @include("layouts.admin.main-menu")
-    </ul>
+    @include("layouts.admin.main-menu")
     <!-- /.sidebar-menu -->
 </section>
 <!-- /.sidebar -->

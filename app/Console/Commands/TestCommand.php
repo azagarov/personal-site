@@ -41,9 +41,14 @@ class TestCommand extends Command
     {
         $this->info("I'm a test command");
 
+//        $a = new \Portfolio\Providers\PortfolioServiceProvider($this->getApplication());
+        $a = new \Portfolio\PortfolioItem();
+//        $a = new \Blog\BlogPost();
+
+        dd($a);
 //        $x = Storage::disk('s3')->allDirectories("images");
-        $x = Storage::disk('s3')->allFiles("images");
-        dd($x);
+//        $x = Storage::disk('s3')->allFiles("images");
+//        dd($x);
 
         return;
         $this->info(Hash::make('a'));

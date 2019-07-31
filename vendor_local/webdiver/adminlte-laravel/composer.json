@@ -1,0 +1,28 @@
+{
+    "name": "webdiver/adminlte-laravel",
+    "description": "The wrapper for AdminLTE2.4 theme for the outstanding ease of use",
+    "type": "library",
+    "require": {
+        "php": ">=5.3.0",
+        "almasaeed2010/adminlte": "~2.4"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Alexey Zagarov",
+            "email": "webdiverdev@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "autoload": {
+        "psr-0": {
+            "AdminLTE": "src/"
+        }
+    },
+
+    "scripts": {
+        "post-install-cmd": [
+            "php artisan vendor:publish --tag=adminlte-public"
+        ]
+    }
+}
