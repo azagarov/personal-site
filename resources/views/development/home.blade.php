@@ -33,7 +33,7 @@
                         <h3>{{ $beginning->title }}</h3>
                         <p>{{ $beginning->annotation }}</p>
                         <ul class="actions">
-                            <li><a href="{{ $beginning->GetUrl() }}" class="button alt">{{ __('Learn More') }}</a></li>
+                            <li><a href="{{ $beginning->GetUrl(['section' => 'development', ]) }}" class="button alt">{{ __('Learn More') }}</a></li>
                         </ul>
                         @else
                             {{-- ???? --}}

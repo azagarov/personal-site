@@ -17,4 +17,12 @@ interface BlogService {
 	 * @return BlogPost|null
 	 */
 	public function GetPost($input, $publicOnly = true);
+
+	/**
+	 * @param $input
+	 * @param bool $publicOnly
+	 *
+	 * @return BlogCategory|null
+	 */
+	public function GetCategory($input, $publicOnly = true);
 }

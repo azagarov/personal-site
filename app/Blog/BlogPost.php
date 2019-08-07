@@ -86,6 +86,11 @@ class BlogPost extends Model implements BlogPostContract
 	    $environment = $this->_prepareUrlEnvironment($environment);
 
 	    switch($environment['section']) {
+
+		    case 'development':
+		    	return url("/{$environment['section']}/blog/{$this->slug}");
+		    	break;
+
 		    default: // common
 				return url("/blog/post/{$this->slug}");
 		    	break;
@@ -106,5 +111,22 @@ class BlogPost extends Model implements BlogPostContract
 
     public function recordShare( array $environment = [] ) {
 	    // TODO: Implement recordShare() method.
+    }
+
+
+    public function meta( $type = NULL, $key = NULL ) {
+	    if(!$this->id) return null;
+
+	    $query = new BlogMetaQuery();
+	    $query->Parent(BlogMeta::PARENT_TYPE_POST, $this->id);
+	    if($type) {
+	    	$query->Type($type);
+	    }
+
+	    if($key) {
+	    	$query->Key($key);
+	    }
+
+	    return $query;
     }
 }

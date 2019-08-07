@@ -104,11 +104,11 @@
             <hr class="major" />
             <section>
                 <h3>{{ __('You may meet me walking around') }}</h3>
-                <h2>{{ __('Sochi') }}, {{ __('Russia') }}</h2>
+                <h2>{{ __('Saint Petersburg') }}, {{ __('Russia') }}</h2>
                 <div class="row">
                     <div class="12u">
                         <div class="google_map_container">
-                            <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d46224.80701884229!2d39.6947426!3d43.6054914!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x40f5d4e111834423%3A0x6e6f61866a5d5df8!2z0KHQvtGH0LgsINCa0YDQsNGB0L3QvtC00LDRgNGB0LrQuNC5INC60YDQsNC5!5e0!3m2!1sru!2sru!4v1468051672347" frameborder="0" style="border:0;width:100%;height:30rem;" allowfullscreen></iframe>
+                            <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d383712.3521052332!2d30.15504800773092!3d59.92313155864009!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sen!2sru!4v1564666194892!5m2!1sen!2sru" width="600" height="450" frameborder="0" style="border:0" allowfullscreen></iframe>
                         </div>
                     </div>
                 </div>

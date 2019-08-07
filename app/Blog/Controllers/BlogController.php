@@ -4,6 +4,8 @@ namespace Blog\Controllers;
 
 use App\Http\Controllers\Controller;
 
+use Blog;
+
 use Blog\Contracts\BlogService;
 use Illuminate\Http\Request;
 
@@ -14,6 +16,20 @@ class BlogController extends Controller
 		$this->blog = $blog;
 	}
 
+
+	public function category($categorySlug) {
+		$category = $this->blog->GetCategory($categorySlug);
+		if(!$category) return abort(404);
+
+
+//		$category->
+//dd(Blog::environment(['section' => $categorySlug, ])->CategoryView($category));
+		return view(Blog::environment(['section' => $categorySlug, ])->CategoryView($category))->with([
+			'category' => $category,
+		]);
+	}
+
+
 	public function main() {
 		echo "<h1>Hola</h1>";
 	}
@@ -22,6 +38,21 @@ class BlogController extends Controller
 	 * @var Blog
 	 */
 	private $blog;
+
+
+	public function ShowSinglePostForCategory($categorySlug, $slug) {
+		$category = $this->blog->GetCategory($categorySlug);
+		if(!$category) return abort(404);
+
+		$post = $this->blog->GetPost($slug);
+		if(!$post) return abort(404);
+
+		return view(Blog::environment(['section' => $categorySlug, ])->PostView($post, $category))->with([
+			'category' => $category,
+			'post' => $post,
+		]);
+
+	}
 
 	public function ShowSinglePost($slug) {
 
@@ -46,6 +77,9 @@ class BlogController extends Controller
 		    return;
 	    }
 
+
+
+//var_dump($post->meta('image', 'featured_image')->Content());
 	    return view('blog.single_post')->with(['post' => $post, ]);
 
     }

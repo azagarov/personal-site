@@ -228,26 +228,50 @@
     </transition>
     <!-- nav-tabs-custom -->
 
-    <div class="modal fade" :class="'modal-' + modal.type" id="post-modal">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span></button>
-                            <h4 class="modal-title" v-text="modal.title"></h4>
-                        </div>
-                        <div class="modal-body">
-                            <p v-text="modal.body">One fine body&hellip;</p>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-outline pull-left" data-dismiss="modal">Close</button>
-                            <button v-if="modal.button" type="button" class="btn btn-outline">Save changes</button>
-                        </div>
+    <transition name="fade">
+        <div class="nav-tabs-custom" v-if="hasPostId && postId">
+            <div class="box box-primary">
+                <div class="box-header with-border">
+                    <h3 class="box-title">Post Meta</h3>
+                    <div class="box-tools pull-right">
+
+                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="fa fa-plus"></i> Add <span class="fa fa-caret-down"></span></button>
+                        <ul class="dropdown-menu">
+                            <li><a href="#"><i class="fa fa-image"></i> Image</a></li>
+                            {{--<li><a href="#">Another action</a></li>--}}
+                            {{--<li><a href="#">Something else here</a></li>--}}
+                            {{--<li class="divider"></li>--}}
+                            {{--<li><a href="#">Separated link</a></li>--}}
+                        </ul>
                     </div>
-                    <!-- /.modal-content -->
                 </div>
-                <!-- /.modal-dialog -->
+                <div class="box-body">
+
+                </div>
             </div>
+        </div>
+    </transition>
+
+    <div class="modal fade" :class="'modal-' + modal.type" id="post-modal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" v-text="modal.title"></h4>
+                </div>
+                <div class="modal-body">
+                    <p v-text="modal.body">One fine body&hellip;</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline pull-left" data-dismiss="modal">Close</button>
+                    <button v-if="modal.button" type="button" class="btn btn-outline">Save changes</button>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
             <!-- /.modal -->
 
 </div>

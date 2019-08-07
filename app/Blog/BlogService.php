@@ -28,4 +28,20 @@ class BlogService implements BlogContract {
 		return $article;
 	}
 
+	public function GetCategory( $input, $publicOnly = true ) {
+		$q = BlogCategory::where('slug', $input);
+		if($publicOnly) {
+			$q->where('status', BlogCategory::STATUS_PUBLIC);
+		}
+		$category = $q->first();
+		if(!$category) {
+			if(is_numeric($input)) {
+				$category = BlogCategory::find($input);
+			}
+		}
+
+		return $category;
+
+	}
+
 }

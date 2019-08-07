@@ -13,4 +13,5 @@ interface BlogCategory {
 	const STATUS_PRIVATE = 'private';
 	const STATUS_DELETED = 'deleted';
 
+
 }

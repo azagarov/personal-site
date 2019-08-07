@@ -31,4 +31,13 @@ interface BlogPost {
 	 * @return BlogPostContent
 	 */
 	public function content($locale);
+
+	/**
+	 * @param string|null $type
+	 * @param string|array|null $key
+	 *
+	 * @return BlogMetaQuery
+	 */
+	public function meta($type = null, $key = null);
+
 }

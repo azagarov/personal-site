@@ -7,6 +7,7 @@
  */
 
 namespace Blog\Facades;
+use Blog\Contracts\BlogEnvironment;
 use Route;
 
 class BlogFacadeAccessor {
@@ -14,6 +15,11 @@ class BlogFacadeAccessor {
 		Route::namespace('\Blog\Controllers')->prefix('blog')->group(function() {
 			Route::get('/', 'BlogController@main');
 			Route::get('post/{slug}', 'BlogController@ShowSinglePost');
+		});
+
+		Route::namespace('\Blog\Controllers')->group(function() {
+			Route::get( '{categorySlug}/blog', 'BlogController@category');
+			Route::get( '{categorySlug}/blog/{slug}', 'BlogController@ShowSinglePostForCategory');
 		});
 	}
 
@@ -47,4 +53,14 @@ class BlogFacadeAccessor {
 	public function langNames() {
 		return ['en' => 'English', 'es' => 'Spanish', 'ru' => 'Russian', ];
 	}
+
+	/**
+	 * @param array $params
+	 *
+	 * @return BlogEnvironment
+	 */
+	public function environment($params = []) {
+		return \Blog\BlogEnvironment::GetInstance($params);
+	}
+
 }
