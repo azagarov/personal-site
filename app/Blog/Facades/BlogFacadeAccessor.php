@@ -19,7 +19,9 @@ class BlogFacadeAccessor {
 
 		Route::namespace('\Blog\Controllers')->group(function() {
 			Route::get( '{categorySlug}/blog', 'BlogController@category');
+
 			Route::get( '{categorySlug}/blog/{slug}', 'BlogController@ShowSinglePostForCategory');
+
 		});
 	}
 
