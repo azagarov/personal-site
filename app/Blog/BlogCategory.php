@@ -47,4 +47,8 @@ class BlogCategory extends Model implements BlogCategoryContract
 		return $this->belongsToMany('Blog\BlogPost', 'blog_post_category', 'category_id', 'post_id');
 	}
 
+	public function publicPosts() {
+		return $this->posts()->where('status', BlogPost::STATUS_PUBLIC)->orderBy('date_occurred', 'desc')->get();
+	}
+
 }

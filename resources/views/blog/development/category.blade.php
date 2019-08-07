@@ -16,7 +16,7 @@
         </header>
         <div class="container">
     <div class="category-description">{!! $category->description!!}</div>
-    @foreach($category->posts as $post)
+    @foreach($category->publicPosts() as $post)
         <a href="{{$post->getUrl(['section' => $category->slug])}}">
             <h3>{{ $post->title }}</h3>
         </a>
