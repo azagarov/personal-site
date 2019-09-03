@@ -12,6 +12,7 @@ class DevelopmentController extends Controller
 
     	return view('development.home', [
     		'beginning' => $blog->GetPost('development-beginning', false),
+		    'blogCategory' => $blog->GetCategory('development'),
 	    ]);
 
     }

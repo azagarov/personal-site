@@ -9,20 +9,25 @@
 namespace Blog\Facades;
 use Blog\Contracts\BlogEnvironment;
 use Route;
+use Request;
 
 class BlogFacadeAccessor {
 	public function publicRoutes() {
-		Route::namespace('\Blog\Controllers')->prefix('blog')->group(function() {
-			Route::get('/', 'BlogController@main');
-			Route::get('post/{slug}', 'BlogController@ShowSinglePost');
-		});
 
-		Route::namespace('\Blog\Controllers')->group(function() {
-			Route::get( '{categorySlug}/blog', 'BlogController@category');
+		if (!strpos(Request::url(),"admin")) {
+			Route::namespace( '\Blog\Controllers' )->prefix( 'blog' )->group( function () {
+				Route::get( '/', 'BlogController@main' );
+				Route::get( 'post/{slug}', 'BlogController@ShowSinglePost' );
+			} );
 
-			Route::get( '{categorySlug}/blog/{slug}', 'BlogController@ShowSinglePostForCategory');
-
-		});
+			Route::namespace( '\Blog\Controllers' )->group( function () {
+				Route::get( '{categorySlug}/blog', 'BlogController@category' )//			     ->where('categorySlug', '(?!admin)')
+				;
+				Route::get( '{categorySlug}/blog/{slug}', 'BlogController@ShowSinglePostForCategory' )
+//				     ->where( 'categorySlug', '(?!admin)' )
+				;
+			} );
+		}
 	}
 
 	public function adminRoutes() {

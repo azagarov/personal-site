@@ -43,10 +43,13 @@
                     <section>
                         <h3>Recent Blog Articles</h3>
                         <ul class="alt">
-                            <li><a href="#">Erat blandit risus vis adipiscing</a></li>
-                            <li><a href="#">Tempus ultricies faucibus amet</a></li>
-                            <li><a href="#">Arcu commodo non adipiscing quis</a></li>
-                            <li><a href="#">Accumsan vis lacinia semper</a></li>
+                    @foreach($blogCategory->publicPosts(4) as $post)
+                            <li><a href="{{ $post->getUrl(['section' => 'development', ]) }}">{{ $post->title }}</a></li>
+                    @endforeach
+                            {{--<li><a href="#">Erat blandit risus vis adipiscing</a></li>--}}
+                            {{--<li><a href="#">Tempus ultricies faucibus amet</a></li>--}}
+                            {{--<li><a href="#">Arcu commodo non adipiscing quis</a></li>--}}
+                            {{--<li><a href="#">Accumsan vis lacinia semper</a></li>--}}
                         </ul>
                     </section>
                 </div>
