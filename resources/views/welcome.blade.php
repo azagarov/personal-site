@@ -91,8 +91,8 @@
                     <a href="{{url('/diving/')}}">{{__('main_menu.diving')}}</a>
                     <a href="{{url('/music/')}}">{{__('main_menu.music')}}</a>
                     <a href="{{url('/traveling/')}}">{{__('main_menu.traveling')}}</a>
-                    <a href="{{url('/living/')}}">{{__('main_menu.living')}}</a>
-                    <a href="{{url('/blog/')}}">{{__('main_menu.blog')}}</a>
+                    <a href="{{url('/living')}}">{{__('main_menu.living')}}</a>
+{{--                    <a href="{{url('/blog/')}}">{{__('main_menu.blog')}}</a>--}}
                 </div>
             </div>
         </div>
